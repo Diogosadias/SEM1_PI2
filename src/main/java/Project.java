@@ -9,12 +9,13 @@ public class Project {
     public static void main(String[] args) throws FileNotFoundException {
         Scanner in = new Scanner(System.in);
         //Modo interativo sem ficheiro
+        
+        System.out.println("N˙mero de grupos et·rios (dimens„o): ");
+        int dim = in.nextInt();
+        
         if (args.length == 0) {
 //            System.out.println("N√∫mero de gera√ß√µes: ");
 //            int ger = in.nextInt();
-
-            System.out.println("N√∫mero de grupos et√°rios (dimens√£o): ");
-            int dim = in.nextInt();
 
             //Criar Matriz Leslie
 
@@ -23,14 +24,13 @@ public class Project {
 
         }
 
-//        Double[][] leslie = LesliMatrix(4);
-//        System.out.println(leslie);
-//        System.out.println(convertToMatrix(leslie));
+        double[][] leslie = LesliMatrix(dim);
+        System.out.printf("%s", convertToMatrix(leslie));
     }
 
-    public static Double[][] LesliMatrix (int dim) {
+    public static double[][] LesliMatrix (int dim) {
         Scanner in = new Scanner(System.in);
-        Double[][] leslie_matrix = new Double[dim][dim];
+        double[][] leslie_matrix = new double[dim][dim];
 
         for (int i = 0; i < dim; i++) {
             for (int j = 0; j < dim; j++) {
@@ -38,33 +38,31 @@ public class Project {
             }
         }
 
-        System.out.println("Introduza a taxa de sobreviv√™ncia pela ordem de grupos et√°rios: ");
+        System.out.println("Introduza a taxa de sobrevivÍncia pela ordem de grupos et·rios: ");
 
         for (int i = 0; i < dim - 1; i++) {
             double survival = in.nextDouble();
             leslie_matrix[i + 1][i] = survival;
         }
 
-        System.out.println("Introduza a taxa de fecundidade pela ordem de grupos et√°rios: ");
+        System.out.println("Introduza a taxa de fecundidade pela ordem de grupos et·rios: ");
 
         for (int j = 0; j < dim; j++) {
             double fecundity = in.nextDouble();
             leslie_matrix[0][j] = fecundity;
         }
 
-        for (int i = 0; i < dim; i++) {
-            for (int j = 0; j < dim; j++) {
-                System.out.println(leslie_matrix[i][j]);
-            }
-        }
+//        for (int i = 0; i < dim; i++) {
+//            for (int j = 0; j < dim; j++) {
+//                System.out.println(leslie_matrix[i][j]);
+//            }
+//        }
 
         return leslie_matrix;
     }
 
-//    public static Matrix convertToMatrix(Double[][] matrix) {
-//        Matrix leslie_matrix = new Basic2DMatrix(matrix);
-//
-//        System.out.println(leslie_matrix);
-//        return leslie_matrix;
-//    }
+    public static Matrix convertToMatrix(double[][] leslie) {
+        Matrix leslie_matrix = new Basic2DMatrix(leslie);
+        return leslie_matrix;
+    }
 }
