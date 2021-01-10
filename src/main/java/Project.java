@@ -3,12 +3,15 @@ import org.la4j.matrix.dense.Basic2DMatrix;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Project {
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws IOException {
         Scanner in = new Scanner(System.in);
         int dim = -1;
+
         //Modo interativo sem ficheiro
         if (args.length == 0) {
             do {
@@ -24,6 +27,9 @@ public class Project {
 
         }
 
+        //FALTA UM MÉTODO PARA VER A DIMENSÃO DE CADA LINHA NO FICHEIRO PQ NÃO É SUPOSTO PERGUNTAR QUANDO ARGS.LENGTH == 2 E > 2
+        // -> SUBSTITUIR NO MÉTODO INTERATIVO E NÃO INTERATIVO COM FICHEIRO
+
         //Modo interativo com ficheiro: java -jar nome_programa.jar -n nome_ficheiro_entrada.txt
         if (args.length == 2) {
             do {
@@ -31,13 +37,43 @@ public class Project {
                 dim = in.nextInt();
             } while (dim < 0);
 
-            //Criar matriz leslie
-            LeslieMatrixFile("src/main/resources/test.txt", 4);
+            //Criar Matriz Leslie com ficheiro
+            System.out.println("Matriz de Leslie com ficheiro: ");
+            System.out.println(LeslieMatrixFile(args[1], dim)); //Testar isto através do terminal
         }
 
         //Modo não interativo com ficheiro
         if (args.length > 2) {
+            String generations_aux = args[1];
+            int generations = Integer.parseInt(generations_aux);
+            String format_gnuplot_files_aux = args[3];
+            int format_gnuplot_files = Integer.parseInt(format_gnuplot_files_aux);
 
+            do {
+                System.out.println("Número de grupos etários (dimensão): ");
+                dim = in.nextInt();
+            } while (dim < 0);
+
+            //Só usar isto para imprimir quando tiver os métodos prontos:
+            // 1). Calcular valor e vetor próprio;
+            // 2). Calcular dimensão da população a cada geração;
+            // 3). Calcular variação da população entre gerações;
+            int[] vec = new int[3];
+            if (args[4].equals("-e")) {
+                vec[0] = 1;
+            }
+            if (args[5].equals("-v")) {
+                vec[1] = 1;
+            }
+            if (args[6].equals("-r")) {
+                vec[2] = 1;
+            }
+
+            System.out.println("Matriz de Leslie com ficheiro - modo não interativo: ");
+            System.out.println(LeslieMatrixFile(args[7], dim));
+
+//            FileWriter writer = new FileWriter(args[8]); //Para escrever o ficheiro de saída, falta métodos
+//            writer.close();
         }
     }
 
@@ -78,7 +114,6 @@ public class Project {
         String line = scanner.nextLine();
         String[] quantity_population = line.split(",");
         int len_quantity_population = quantity_population.length;
-        System.out.println("IMPRIMIR O QUE ESTÁ NO ARRAY BITCHEEEEES");
 
         for (int i = 0; i < len_quantity_population; i++) {
             quantity_population[i] = quantity_population[i].trim();
