@@ -221,4 +221,8 @@ public class Project {
     /***
      * Teste Unitário dimPopulation - AFAZER!!
      */
+    
+    public static void gnuplotGraph() {
+    	
+    }
 }
