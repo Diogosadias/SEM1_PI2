@@ -89,14 +89,6 @@ public class Project {
         }
     }
 
-    //Calcular dimensão da população a cada geração;
-    public static double dimPopulation(double[][] distribuition, int dim) {
-        double counter = 0;
-        for (int i = 0; i < dim; i++) {
-            counter += distribuition[i][0];
-        }
-        return counter;
-    }
 
 
     public static double[][] LeslieMatrix (int dim) {
@@ -236,9 +228,6 @@ public class Project {
         return population.sum();
     }
 
-    /***
-     * Teste Unitário dimPopulation - AFAZER!!
-     */
     
     public static void gnuplotGraph() {
     	
@@ -250,7 +239,7 @@ public class Project {
      *
      * Taxa de variação segue a formula ((população ano t - população inicial) - 1) *100%
      *
-     * Esta função apenas imprime os valores, para guardar podemos dar update e colocar numa lista
+     * Esta função apenas imprime os valores, para guardar podemos dar update a esta função e colocar a returnar uma lista
      * Output : taxa de variação ao longo dos anos - Lista de valores entre anos
      */
 
@@ -259,7 +248,7 @@ public class Project {
         Matrix initialpopulation = convertToMatrix(population);
 
         for(int i = 1; i<t;i++){
-            println(((totaldimPopulatotion(dimPopulationinT(leslie,population,i)) - totaldimPopulatotion(initialpopulation))-1.0) * 100);
+            System.out.println(((totaldimPopulatotion(dimPopulationinT(leslie,population,i)) - totaldimPopulatotion(initialpopulation))-1.0) * 100);
         }
 
     }
