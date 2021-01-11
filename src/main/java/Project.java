@@ -158,4 +158,31 @@ public class Project {
 
         return matrix;
     }
+
+    /***
+     * Calcular dimensão de População em Determinado momento
+     * Parametros : População inicial, taxa de sobrevivencia, taxa de fecundidade e valor de tempo ou
+     * Matrix Leslie + Matriz população incial e valor de tempo
+     *
+     * Output: Valor da dimensão da população em t
+     */
+    public static Matrix dimPopulationinT(double[][] leslie,double[][] population, int t ){
+
+        //Criação da Matrix em T
+        double [][] populationinT = new double[population.length][1];
+        Matrix populationinTMatrix = convertToMatrix(populationinT);
+
+        //Conversao em Matrizes para facilitar calculos
+        Matrix lesliematrix = convertToMatrix(leslie);
+        Matrix populationInicial = convertToMatrix(population);
+
+        populationinTMatrix  = (lesliematrix.power(t)).multiply(populationInicial);
+
+        return populationinTMatrix;
+    }
+
+    /***
+     * Teste Unitário dimPopulation - AFAZER!!
+     */
+
 }
