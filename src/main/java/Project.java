@@ -219,10 +219,38 @@ public class Project {
     }
 
     /***
+     * Dimensão da população Reprodutora - Posso ter que multiplicar o valor por 2;
+     * Recebe matrix e calcula a sua soma
+     */
+    public static double totaldimPopulatotion(Matrix population){
+        return population.sum();
+    }
+
+    /***
      * Teste Unitário dimPopulation - AFAZER!!
      */
     
     public static void gnuplotGraph() {
     	
+    }
+
+    /***
+     * Variação da população nos entre o inicio e os ano final dado
+     * Parametros:População inicial, Matrix leslie e t final
+     *
+     * Taxa de variação segue a formula ((população ano t - população inicial) - 1) *100%
+     *
+     * Esta função apenas imprime os valores, para guardar podemos dar update e colocar numa lista
+     * Output : taxa de variação ao longo dos anos - Lista de valores entre anos
+     */
+
+    public static void rateofchange(double[][] leslie,double[][] population, int t ){
+
+        Matrix initialpopulation = convertToMatrix(population);
+
+        for(int i = 1; i<t;i++){
+            println(((totaldimPopulatotion(dimPopulationinT(leslie,population,i)) - totaldimPopulatotion(initialpopulation))-1.0) * 100);
+        }
+
     }
 }
