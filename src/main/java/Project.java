@@ -1,4 +1,5 @@
-import org.la4j.*;
+import org.la4j.Matrix;
+import org.la4j.decomposition.EigenDecompositor;
 import org.la4j.matrix.dense.Basic2DMatrix;
 
 import java.io.File;
@@ -25,6 +26,9 @@ public class Project {
             Matrix matrix_leslie = convertToMatrix(leslie);
             System.out.println(matrix_leslie);
 
+            System.out.println("TESTE");
+            System.out.println(eigen_value(leslie));
+
         }
 
         //FALTA UM MÉTODO PARA VER A DIMENSÃO DE CADA LINHA NO FICHEIRO PQ NÃO É SUPOSTO PERGUNTAR QUANDO ARGS.LENGTH == 2 E > 2
@@ -42,7 +46,7 @@ public class Project {
             System.out.println(LeslieMatrixFile(args[1], dim)); //Testar isto através do terminal
         }
 
-        //Modo não interativo com ficheiro
+        //Modo não interativo com ficheiro: java -jar nome_programa.jar -t XXX -g Y -e -v -r nome_ficheiro_entrada.txt nome_ficheiro_saida.txt
         if (args.length > 2) {
             String generations_aux = args[1];
             int generations = Integer.parseInt(generations_aux);
@@ -54,13 +58,22 @@ public class Project {
                 dim = in.nextInt();
             } while (dim < 0);
 
+            System.out.println(LeslieMatrixFile(args[args.length - 1], dim)); //TESTAR!!!!!!
+
             //Só usar isto para imprimir quando tiver os métodos prontos:
             // 1). Calcular valor e vetor próprio;
+            // Eu
             // 2). Calcular dimensão da população a cada geração;
+            // Tiago
             // 3). Calcular variação da população entre gerações;
+            // Tiago
+
+            // Controlar quando tem apenas 1, 2 ou 3 argumentos
             int[] vec = new int[3];
             if (args[4].equals("-e")) {
                 vec[0] = 1;
+                System.out.println("Valor Próprio: ");
+//                eigen_value()
             }
             if (args[5].equals("-v")) {
                 vec[1] = 1;
@@ -159,6 +172,31 @@ public class Project {
         return matrix;
     }
 
+    public static double eigen_value(double[][] matrix_leslie) {
+        // Criar objeto do tipo Matriz
+        Matrix a = new Basic2DMatrix(matrix_leslie);
+
+        //Obtem valores e vetores próprios fazendo "Eigen Decomposition"
+        EigenDecompositor eigenD = new EigenDecompositor(a);
+        Matrix[] mattD = eigenD.decompose();
+
+        //Converte objeto Matrix (duas matrizes) para array Java
+        double[][] matA = mattD[0].toDenseMatrix().toArray();
+        double[][] matB = mattD[1].toDenseMatrix().toArray(); //Dá-nos o valor próprio
+
+        double max_eigen_value = -1;
+
+        for (int i = 0; i < matB.length; i++) {
+            for (int j = 0; j < matB.length; j++) {
+                if (max_eigen_value < matB[i][j]) {
+                    max_eigen_value = matB[i][j];
+                }
+            }
+        }
+
+        return max_eigen_value;
+    }
+
     /***
      * Calcular dimensão de População em Determinado momento
      * Parametros : População inicial, taxa de sobrevivencia, taxa de fecundidade e valor de tempo ou
@@ -184,5 +222,4 @@ public class Project {
     /***
      * Teste Unitário dimPopulation - AFAZER!!
      */
-
 }
