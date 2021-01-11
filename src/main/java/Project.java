@@ -4,7 +4,6 @@ import org.la4j.matrix.dense.Basic2DMatrix;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
