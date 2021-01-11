@@ -89,6 +89,16 @@ public class Project {
         }
     }
 
+    //Calcular dimensão da população a cada geração;
+    public static double dimPopulation(double[][] distribuition, int dim) {
+        double counter = 0;
+        for (int i = 0; i < dim; i++) {
+            counter += distribuition[i][0];
+        }
+        return counter;
+    }
+
+
     public static double[][] LeslieMatrix (int dim) {
         Scanner in = new Scanner(System.in);
         double[][] leslie_matrix = new double[dim][dim];
