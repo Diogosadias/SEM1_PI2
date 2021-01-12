@@ -10,7 +10,9 @@ import java.util.Scanner;
 
 public class Project {
 	
-	static String pathGnuplot= "C:\\Program Files\\gnuplot\\bin\\gnuplot";
+	static String pathGnuplot = "C:\\Program Files\\gnuplot\\bin\\gnuplot";
+	static String dataNameFile = "Data.txt";
+	static String plotNameFile = "Template.gp";
 	
     public static void main(String[] args) throws IOException {
         Scanner in = new Scanner(System.in);
@@ -32,6 +34,14 @@ public class Project {
             System.out.println("TESTE");
             System.out.println(eigen_value(leslie));
 
+            double[][] dados = new double[10][10];
+            for(int i = 0; i < 10; i++) {
+            	dados[i][0] = i+1;
+            }
+            for(int i = 0; i < 10; i++) {
+            	dados[0][i] = i+2;
+            }
+            createGraph(dados, "png", "Matriz", "População", "Individuos", "Classes", "Imagem.png");
         }
 
         //FALTA UM MÉTODO PARA VER A DIMENSÃO DE CADA LINHA NO FICHEIRO PQ NÃO É SUPOSTO PERGUNTAR QUANDO ARGS.LENGTH == 2 E > 2
@@ -252,6 +262,13 @@ public class Project {
 
     }
     
+    public static void createGraph(double[][] matrix, String outputType, String graphTitle,
+    		String resultType, String xLine, String yLine, String outputFileName) throws IOException {
+    	creatingDataFile(matrix);
+    	gnuplotGraph(outputType, graphTitle, resultType, xLine, yLine, outputFileName);
+    	startingGnuplot();
+    }
+    
     /***
      * Desenho da representação gráfica da dimensão da populaçãao (total de indíviduos), 
      * a taxa de variação e a evolução da distribuição da população,
@@ -260,13 +277,12 @@ public class Project {
      * Esta função desenha os gráficos respetivos em formato png, txt e eps.
      * @throws IOException 
      */
-    public static void gnuplotGraph(String outputType, String graphTitle, String dataFile,
-    		String resultType, String xLine, String yLine) throws IOException {
-    	String nameFile = "test" + outputType;
-    	FileWriter plot = new FileWriter(nameFile);
+    public static void gnuplotGraph(String outputType, String graphTitle, String dataDescription, 
+    		String xLine, String yLine, String outputFileName) throws IOException {
+    	FileWriter plot = new FileWriter(plotNameFile);
     	
     	plot.write("set terminal " + outputType + ("\n"));
-    	plot.write("set output \"" + nameFile + ("\"\n"));
+    	plot.write("set output \"" + outputFileName + ("\"\n"));
     	plot.write("\n");
     	plot.write("set title \"" + graphTitle + "\"\n");
     	plot.write("set xlabel \"" + xLine + "\"\n");
@@ -274,21 +290,21 @@ public class Project {
     	plot.write("\n");
     	plot.write("set style data linespoints");
     	plot.write("\n");
-    	plot.write("plot \"" + dataFile + "\" tittle \"" + resultType + "\"");
-    	
+    	plot.write("plot \"" + dataNameFile + "\" tittle \"" + dataDescription + "\"");
+    	plot.close();
     }
     
-    public static void startingGnuplot(String nameFile, String outputType) throws IOException {
-    	if(nameFile.equals(null)) {
-    		nameFile = "graph" + outputType;
-    	}
-    	
-    	String result = pathGnuplot + " " + nameFile;
+    public static void startingGnuplot() throws IOException {
+    	String result = String.format("\"%s\" \"%s\"", pathGnuplot, plotNameFile);
     	Runtime  rt = Runtime.getRuntime(); 
     	Process prcs = rt.exec(result);
     }
     
-    public static void creatingDataFile() {
-    	
+    public static void creatingDataFile(double[][] matrix) throws IOException {
+    	FileWriter data = new FileWriter(dataNameFile);
+    	for(int i = 0; i < matrix.length; i++) {
+    		data.write(String.format("%.2f %.2f\n", matrix[i][0], matrix[0][i]));
+    	}
+    	data.close();
     }
 }
