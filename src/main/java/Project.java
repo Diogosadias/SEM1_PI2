@@ -13,6 +13,7 @@ public class Project {
 	static String pathGnuplot = "C:\\Program Files\\gnuplot\\bin\\gnuplot";
 	static String dataNameFile = "Data.txt";
 	static String plotNameFile = "Template.gp";
+	static String outputDir = "outputs";
 	
     public static void main(String[] args) throws IOException {
         Scanner in = new Scanner(System.in);
@@ -41,7 +42,7 @@ public class Project {
             for(int i = 0; i < 10; i++) {
             	dados[0][i] = i+2;
             }
-            createGraph(dados, "png", "Matriz", "População", "Individuos", "Classes", "Imagem.png");
+            createGraph(dados, "png", "Matriz", "População", "Individuos", "Classes", outputDir +"/Imagem.png");
         }
 
         //FALTA UM MÉTODO PARA VER A DIMENSÃO DE CADA LINHA NO FICHEIRO PQ NÃO É SUPOSTO PERGUNTAR QUANDO ARGS.LENGTH == 2 E > 2

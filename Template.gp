@@ -1,5 +1,5 @@
 set terminal png
-set output "Imagem.png"
+set output "outputs/Imagem.png"
 set title "Matriz"
 set xlabel "Individuos"
 set ylabel "Classes"
