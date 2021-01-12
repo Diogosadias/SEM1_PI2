@@ -281,16 +281,13 @@ public class Project {
     		String xLine, String yLine, String outputFileName) throws IOException {
     	FileWriter plot = new FileWriter(plotNameFile);
     	
-    	plot.write("set terminal " + outputType + ("\n"));
-    	plot.write("set output \"" + outputFileName + ("\"\n"));
-    	plot.write("\n");
-    	plot.write("set title \"" + graphTitle + "\"\n");
-    	plot.write("set xlabel \"" + xLine + "\"\n");
-    	plot.write("set ylabel \"" + yLine + "\"\n");
-    	plot.write("\n");
-    	plot.write("set style data linespoints");
-    	plot.write("\n");
-    	plot.write("plot \"" + dataNameFile + "\" tittle \"" + dataDescription + "\"");
+    	plot.write(String.format("set terminal %s\n", outputType));
+    	plot.write(String.format("set output \"%s\"\n", outputFileName));
+    	plot.write(String.format("set title \"%s\"\n", graphTitle));
+    	plot.write(String.format("set xlabel \"%s\"\n", xLine));
+    	plot.write(String.format("set ylabel \"%s\"\n", yLine));
+    	plot.write(String.format("set style data linespoints\n"));
+    	plot.write(String.format("plot \"%s\" \"%s\"\n", dataNameFile, dataDescription));
     	plot.close();
     }
     
