@@ -4,10 +4,14 @@ import org.la4j.matrix.dense.Basic2DMatrix;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Scanner;
 
 public class Project {
+	
+	static String pathGnuplot= "C:\\Program Files\\gnuplot\\bin\\gnuplot";
+	
     public static void main(String[] args) throws IOException {
         Scanner in = new Scanner(System.in);
         int dim = -1;
@@ -84,8 +88,8 @@ public class Project {
             System.out.println("Matriz de Leslie com ficheiro - modo não interativo: ");
             System.out.println(LeslieMatrixFile(args[7], dim));
 
-//            FileWriter writer = new FileWriter(args[8]); //Para escrever o ficheiro de saída, falta métodos
-//            writer.close();
+            FileWriter writer = new FileWriter(args[8]); //Para escrever o ficheiro de saída, falta métodos
+            writer.close();
         }
     }
 
@@ -228,11 +232,6 @@ public class Project {
         return population.sum();
     }
 
-    
-    public static void gnuplotGraph() {
-    	
-    }
-
     /***
      * Variação da população nos entre o inicio e os ano final dado
      * Parametros:População inicial, Matrix leslie e t final
@@ -251,5 +250,45 @@ public class Project {
             System.out.println(((totaldimPopulatotion(dimPopulationinT(leslie,population,i)) - totaldimPopulatotion(initialpopulation))-1.0) * 100);
         }
 
+    }
+    
+    /***
+     * Desenho da representação gráfica da dimensão da populaçãao (total de indíviduos), 
+     * a taxa de variação e a evolução da distribuição da população,
+     * por classe, ao longo do tempo.
+     * 
+     * Esta função desenha os gráficos respetivos em formato png, txt e eps.
+     * @throws IOException 
+     */
+    public static void gnuplotGraph(String outputType, String graphTitle, String dataFile,
+    		String resultType, String xLine, String yLine) throws IOException {
+    	String nameFile = "test" + outputType;
+    	FileWriter plot = new FileWriter(nameFile);
+    	
+    	plot.write("set terminal " + outputType + ("\n"));
+    	plot.write("set output \"" + nameFile + ("\"\n"));
+    	plot.write("\n");
+    	plot.write("set title \"" + graphTitle + "\"\n");
+    	plot.write("set xlabel \"" + xLine + "\"\n");
+    	plot.write("set ylabel \"" + yLine + "\"\n");
+    	plot.write("\n");
+    	plot.write("set style data linespoints");
+    	plot.write("\n");
+    	plot.write("plot \"" + dataFile + "\" tittle \"" + resultType + "\"");
+    	
+    }
+    
+    public static void startingGnuplot(String nameFile, String outputType) throws IOException {
+    	if(nameFile.equals(null)) {
+    		nameFile = "graph" + outputType;
+    	}
+    	
+    	String result = pathGnuplot + " " + nameFile;
+    	Runtime  rt = Runtime.getRuntime(); 
+    	Process prcs = rt.exec(result);
+    }
+    
+    public static void creatingDataFile() {
+    	
     }
 }
