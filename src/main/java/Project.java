@@ -251,13 +251,33 @@ public class Project {
         return population.sum();
     }
 
+
+    /***
+     * Número de gerações a estimar
+     *
+     */
+    public int numberOfGerations(){
+        Scanner in = new Scanner(System.in);
+
+        System.out.print("Número de gerações a estimar");
+        int geracoes = in.nextInt();
+
+        return geracoes;
+    }
+
+    /***
+     * Calculo da distribuição da população
+     *
+     */
+
+
     /***
      * Variação da população nos entre o inicio e os ano final dado
      * Parametros:População inicial, Matrix leslie e t final
      *
      * Taxa de variação segue a formula ((população ano t - população inicial) - 1) *100%
      *
-     * Esta função apenas imprime os valores, para guardar podemos dar update a esta função e colocar a returnar uma lista
+     * Esta função apenas imprime os valores, para guardar podemos dar update a esta função e colocar a retornar uma lista
      * Output : taxa de variação ao longo dos anos - Lista de valores entre anos
      */
 
