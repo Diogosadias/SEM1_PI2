@@ -146,41 +146,7 @@ public class Project {
 
             //Criar Matriz Leslie com ficheiro
             System.out.println("Matriz de Leslie com ficheiro: ");
-            System.out.println(LeslieMatrixFile(args[1], dim));
-            
-            System.out.println("Qual dos gráficos deseja gerar: ");
-            System.out.println(" 1-Número total de individuos");
-            System.out.println(" 2-Crescimento da população");
-            System.out.println(" 3-Numero por classe (não normalizado)");
-            System.out.println(" 4-Numero por classe (normalizado)");
-            graph = in.nextInt();
-
-            switch(graph) {
-            case 1:
-            	double [][] graphResults = new double[gen+1][gen+1];
-            	for(int i = gen; i > -1; i--) {
-            		graphResults[i][0] = gen;
-            	}
-            	break;
-            case 2:
-            	break;
-            case 3:
-            	break;
-            case 4:
-            	break;
-            default:
-            	System.out.println("Escolha inválida.");
-            	break;
-            }
-            
-            double[][] dados = new double[10][10];
-            for(int i = 0; i < 10; i++) {
-            	dados[i][0] = i+1;
-            }
-            for(int i = 0; i < 10; i++) {
-            	dados[0][i] = i+2;
-            }
-//            createGraph(dados, "png", "Matriz", "População", "Individuos", "Classes", outputDir +"/Imagem.png");
+            System.out.println(LeslieMatrixFile(args[1], dim));            
         }
 
         //Modo não interativo com ficheiro: java -jar nome_programa.jar -t XXX -g Y -e -v -r nome_ficheiro_entrada.txt nome_ficheiro_saida.txt
