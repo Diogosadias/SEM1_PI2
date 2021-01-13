@@ -57,7 +57,7 @@ public class Project {
 
             //Criar Matriz Leslie com ficheiro
             System.out.println("Matriz de Leslie com ficheiro: ");
-            System.out.println(LeslieMatrixFile(args[1], dim)); //Testar isto através do terminal
+            System.out.println(LeslieMatrixFile(args[1], dim));
         }
 
         //Modo não interativo com ficheiro: java -jar nome_programa.jar -t XXX -g Y -e -v -r nome_ficheiro_entrada.txt nome_ficheiro_saida.txt
@@ -72,8 +72,6 @@ public class Project {
                 dim = in.nextInt();
             } while (dim < 0);
 
-            System.out.println(LeslieMatrixFile(args[args.length - 1], dim)); //TESTAR!!!!!!
-
             //Só usar isto para imprimir quando tiver os métodos prontos:
             // 1). Calcular valor e vetor próprio;
             // Eu
@@ -84,20 +82,28 @@ public class Project {
 
             // Controlar quando tem apenas 1, 2 ou 3 argumentos
             int[] vec = new int[3];
-            if (args[4].equals("-e")) {
-                vec[0] = 1;
-                System.out.println("Valor Próprio: ");
-//                eigen_value()
-            }
-            if (args[5].equals("-v")) {
-                vec[1] = 1;
-            }
-            if (args[6].equals("-r")) {
-                vec[2] = 1;
+
+            for (int i = 0; i < args.length; i++) {
+                if (args[i].equals("-e")) {
+                    vec[0] = 1;
+//                    eigen_value()
+                }
+                if (args[i].equals("-v")) {
+                    vec[1] = 1;
+//                    eigen_value()
+                }
+                if (args[i].equals("-r")) {
+                    vec[2] = 1;
+                }
             }
 
             System.out.println("Matriz de Leslie com ficheiro - modo não interativo: ");
-            System.out.println(LeslieMatrixFile(args[7], dim));
+
+            for (int i = 0; i < vec.length; i++) {
+                System.out.println(vec[i]);
+            }
+
+            System.out.println(LeslieMatrixFile(args[args.length - 2], dim));
 
             FileWriter writer = new FileWriter(args[8]); //Para escrever o ficheiro de saída, falta métodos
             writer.close();
@@ -144,6 +150,7 @@ public class Project {
         String[] quantity_population = line.split(",");
         int len_quantity_population = quantity_population.length;
 
+        System.out.println("Quantidade de população: ");
         for (int i = 0; i < len_quantity_population; i++) {
             quantity_population[i] = quantity_population[i].trim();
             quantity_population[i] = quantity_population[i].substring(4);
@@ -185,6 +192,7 @@ public class Project {
 
         Matrix matrix = convertToMatrix(matrixleslie);
 
+        System.out.println("Matriz de Leslie: ");
         return matrix;
     }
 
