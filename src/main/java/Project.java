@@ -32,7 +32,7 @@ public class Project {
             Matrix matrix_leslie = convertToMatrix(leslie);
             System.out.println(matrix_leslie);
 
-            System.out.println("TESTE");
+            System.out.println("Valor Próprio: ");
             System.out.println(eigen_value(leslie));
 
             double[][] dados = new double[10][10];
@@ -80,17 +80,13 @@ public class Project {
             // 3). Calcular variação da população entre gerações;
             // Tiago
 
-            // Controlar quando tem apenas 1, 2 ou 3 argumentos
             int[] vec = new int[3];
-
             for (int i = 0; i < args.length; i++) {
                 if (args[i].equals("-e")) {
                     vec[0] = 1;
-//                    eigen_value()
                 }
                 if (args[i].equals("-v")) {
                     vec[1] = 1;
-//                    eigen_value()
                 }
                 if (args[i].equals("-r")) {
                     vec[2] = 1;
@@ -99,14 +95,46 @@ public class Project {
 
             System.out.println("Matriz de Leslie com ficheiro - modo não interativo: ");
 
-            for (int i = 0; i < vec.length; i++) {
-                System.out.println(vec[i]);
+            try {
+                File file = new File(args[args.length - 1]);
+                FileWriter writer = new FileWriter(args[args.length - 1]);
+                if (file.createNewFile()) {
+                    System.out.println("Ficheiro criado: " + file.getName());
+                    writer.write("Gerações: " + generations + "\n");
+                    writer.write("Formato ficheiro gnuplot: " + format_gnuplot_files + "\n");
+                    if (vec[0] == 1) {
+                        writer.write("Valor Próprio: " + "\n");
+//                        eigen_value();
+                    }
+                    if (vec[1] == 1) {
+                        writer.write("Dimensão da População: " + "\n");
+                    }
+                    if (vec[2] == 1) {
+                        writer.write("Variação da População: " + "\n");
+                    }
+                    writer.close();
+                } else {
+                    System.out.println("Ficheiro já existente. Será atualizado.");
+                    writer.write("Gerações: " + generations + "\n");
+                    writer.write("Formato ficheiro gnuplot: " + format_gnuplot_files + "\n");
+                    if (vec[0] == 1) {
+                        writer.write("Valor Próprio: " + "\n");
+//                        eigen_value();
+                    }
+                    if (vec[1] == 1) {
+                        writer.write("Dimensão da População: " + "\n");
+//                        Função
+                    }
+                    if (vec[2] == 1) {
+                        writer.write("Variação da População: " + "\n");
+//                        Função
+                    }
+                    writer.close();
+                }
+            } catch (IOException e) {
+                System.out.println("Ocorreu um erro ao escrever/criar o ficheiro.");
+                e.printStackTrace();
             }
-
-            System.out.println(LeslieMatrixFile(args[args.length - 2], dim));
-
-            FileWriter writer = new FileWriter(args[8]); //Para escrever o ficheiro de saída, falta métodos
-            writer.close();
         }
     }
 
