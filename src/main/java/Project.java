@@ -19,7 +19,10 @@ public class Project {
         Scanner in = new Scanner(System.in);
         int dim = -1;
         int gen = -1;
-
+        int graph = -1;
+        int save = -1;
+        String fileName = "";
+        
         //Modo interativo sem ficheiro
         if (args.length == 0) {
             do {
@@ -37,15 +40,96 @@ public class Project {
 
             System.out.println("Valor Próprio: ");
             System.out.println(eigen_value(leslie));
+            
+            System.out.println("Vetor Próprio: ");
+//            System.out.printf("%.2f", eigen_value(leslie));
 
-            double[][] dados = new double[10][10];
-            for(int i = 0; i < 10; i++) {
-            	dados[i][0] = i+1;
+            double[][] population = new double[dim][1];
+            for(int i = 0; i < dim; i++) {
+            	population[i][0] = i+1;
             }
-            for(int i = 0; i < 10; i++) {
-            	dados[0][i] = i+2;
+            for(int i = 0; i < 1; i++) {
+            	population[0][i] = i+2;
             }
-            createGraph(dados, "png", "Matriz", "População", "Individuos", "Classes", outputDir +"/Imagem.png");
+            Matrix populationResult = dimPopulationinT(leslie, population, gen);
+            System.out.println("Dimensão da população");
+            System.out.println(populationResult);
+            
+            double [] graphResults = new double[gen];
+            String graphTitle = "";
+            String resulType = "";
+            String xLine = "";
+            String yLine = "";
+            while (graph == -1){
+	            System.out.println("Qual dos gráficos deseja gerar: ");
+	            System.out.println(" 1-Número total de individuos");
+	            System.out.println(" 2-Crescimento da população");
+	            System.out.println(" 3-Numero por classe (não normalizado)");
+	            System.out.println(" 4-Numero por classe (normalizado)");
+	            graph = in.nextInt();
+	
+	            switch(graph) {
+	            case 1:
+	            	graphResults = new double[gen+1];
+	            	for(int i = 0; i < gen+1; i++) {
+	            		graphResults[i] = populationResult.get(i, 0);
+	            	}
+	            	graphTitle = "Número Total De Individuos";
+	                resulType = "Número Total De Individuos";
+	                xLine = "Momento";
+	                yLine = "Dimensão da população";
+	            	break;
+	            case 2:
+	            	break;
+	            case 3:
+	            	break;
+	            case 4:
+	            	break;
+	            default:
+	            	System.out.println("Escolha inválida.");
+	            	graph = -1;
+	            	break;
+	            }
+            }
+            createGraph(graphResults, 0, graphTitle, resulType, xLine, yLine, "");
+            
+            while (save == -1){
+	            System.out.println("Guardar como: ");
+	            System.out.println(" 1-png");
+	            System.out.println(" 2-txt");
+	            System.out.println(" 3-eps");
+	            System.out.println(" 0-Sair sem guardar");
+	            save = in.nextInt();
+	            
+	            if(save < 0 || save > 3) {
+	            	System.out.println("Escolha inválida.");
+	            	save = -1;
+	            }
+            }
+            if(save != 0) {
+            	System.out.println("Nome do ficheiro: ");
+            	if(in.hasNextLine()) {
+            		in.nextLine();
+            	}
+            	fileName = in.nextLine();
+            	
+            	String defaultExtension = "";
+            	switch (save) {
+            	case 1:
+            		defaultExtension = ".png";
+            		break;
+            	case 2:
+            		defaultExtension = ".txt";
+            		break;
+            	case 3:
+            		defaultExtension = ".eps";
+            		break;
+            	}
+            	if(!fileName.toLowerCase().endsWith(defaultExtension)) {
+            		fileName = fileName + defaultExtension;
+            	}
+            	createGraph(graphResults, save, graphTitle, resulType, xLine, yLine, fileName);
+            }
         }
 
         //FALTA UM MÉTODO PARA VER A DIMENSÃO DE CADA LINHA NO FICHEIRO PQ NÃO É SUPOSTO PERGUNTAR QUANDO ARGS.LENGTH == 2 E > 2
@@ -63,6 +147,40 @@ public class Project {
             //Criar Matriz Leslie com ficheiro
             System.out.println("Matriz de Leslie com ficheiro: ");
             System.out.println(LeslieMatrixFile(args[1], dim));
+            
+            System.out.println("Qual dos gráficos deseja gerar: ");
+            System.out.println(" 1-Número total de individuos");
+            System.out.println(" 2-Crescimento da população");
+            System.out.println(" 3-Numero por classe (não normalizado)");
+            System.out.println(" 4-Numero por classe (normalizado)");
+            graph = in.nextInt();
+
+            switch(graph) {
+            case 1:
+            	double [][] graphResults = new double[gen+1][gen+1];
+            	for(int i = gen; i > -1; i--) {
+            		graphResults[i][0] = gen;
+            	}
+            	break;
+            case 2:
+            	break;
+            case 3:
+            	break;
+            case 4:
+            	break;
+            default:
+            	System.out.println("Escolha inválida.");
+            	break;
+            }
+            
+            double[][] dados = new double[10][10];
+            for(int i = 0; i < 10; i++) {
+            	dados[i][0] = i+1;
+            }
+            for(int i = 0; i < 10; i++) {
+            	dados[0][i] = i+2;
+            }
+//            createGraph(dados, "png", "Matriz", "População", "Individuos", "Classes", outputDir +"/Imagem.png");
         }
 
         //Modo não interativo com ficheiro: java -jar nome_programa.jar -t XXX -g Y -e -v -r nome_ficheiro_entrada.txt nome_ficheiro_saida.txt
@@ -363,7 +481,7 @@ public class Project {
 
     }
     
-    public static void createGraph(double[][] matrix, String outputType, String graphTitle,
+    public static void createGraph(double[] matrix, int outputType, String graphTitle,
     		String resultType, String xLine, String yLine, String outputFileName) throws IOException {
     	creatingDataFile(matrix);
     	gnuplotGraph(outputType, graphTitle, resultType, xLine, yLine, outputFileName);
@@ -378,31 +496,55 @@ public class Project {
      * Esta função desenha os gráficos respetivos em formato png, txt e eps.
      * @throws IOException 
      */
-    public static void gnuplotGraph(String outputType, String graphTitle, String dataDescription, 
+    public static void gnuplotGraph(int outputType, String graphTitle, String dataDescription, 
     		String xLine, String yLine, String outputFileName) throws IOException {
     	FileWriter plot = new FileWriter(plotNameFile);
+    	String terminalOutput = "";
     	
-    	plot.write(String.format("set terminal %s\n", outputType));
-    	plot.write(String.format("set output \"%s\"\n", outputFileName));
+    	switch(outputType) {
+    	case 1:
+    		terminalOutput = "png";
+    		break;
+    	case 2:
+    		terminalOutput = "dumb";
+    		break;
+    	case 3:
+    		terminalOutput = "postscript";
+    		break;
+    	default:
+    		terminalOutput = "qt";
+    		break;
+    	}
+    	
+    	plot.write(String.format("set terminal %s\n", terminalOutput));
+    	if(outputType >= 1 && outputType <= 3) {
+    		plot.write(String.format("set output \"%s/%s\"\n", outputDir, outputFileName));
+    	}
+    	plot.write(String.format("set encoding utf8\n"));
     	plot.write(String.format("set title \"%s\"\n", graphTitle));
     	plot.write(String.format("set xlabel \"%s\"\n", xLine));
     	plot.write(String.format("set ylabel \"%s\"\n", yLine));
     	plot.write(String.format("set style data linespoints\n"));
-    	plot.write(String.format("plot \"%s\" \"%s\"\n", dataNameFile, dataDescription));
+    	plot.write(String.format("plot \"%s\" title \"%s\"\n", dataNameFile, dataDescription));
     	plot.close();
     }
     
     public static void startingGnuplot() throws IOException {
-    	String result = String.format("\"%s\" \"%s\"", pathGnuplot, plotNameFile);
+    	String result = String.format("\"%s\" -p \"%s\"", pathGnuplot, plotNameFile);
     	Runtime  rt = Runtime.getRuntime(); 
     	Process prcs = rt.exec(result);
     }
     
-    public static void creatingDataFile(double[][] matrix) throws IOException {
+    public static void creatingDataFile(double[] matrix) throws IOException {
     	FileWriter data = new FileWriter(dataNameFile);
     	for(int i = 0; i < matrix.length; i++) {
-    		data.write(String.format("%.2f %.2f\n", matrix[i][0], matrix[0][i]));
+    		data.write(String.format("%d %.2f\n", i, matrix[i]));
     	}
     	data.close();
+    }
+    
+    public static void creatingTxtFileGraph(Matrix lesliMatrix, int gen, double dimPopulation, 
+    		double rateOfChange, double classes, double eigenvalue, double vector) throws IOException {
+    	FileWriter result = new FileWriter("TextGraphResult.txt");
     }
 }
