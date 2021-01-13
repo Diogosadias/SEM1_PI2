@@ -18,13 +18,16 @@ public class Project {
     public static void main(String[] args) throws IOException {
         Scanner in = new Scanner(System.in);
         int dim = -1;
+        int gen = -1;
 
         //Modo interativo sem ficheiro
         if (args.length == 0) {
             do {
                 System.out.println("Número de grupos etários (dimensão): ");
                 dim = in.nextInt();
-            } while (dim < 0);
+                System.out.println("Número de gerações a calcular: ");
+                gen = in.nextInt();
+            } while (dim < 0 && gen < 0);
 
             //Criar Matriz Leslie
             double[][] leslie = LeslieMatrix(dim);
@@ -53,7 +56,9 @@ public class Project {
             do {
                 System.out.println("Número de grupos etários (dimensão): ");
                 dim = in.nextInt();
-            } while (dim < 0);
+                System.out.println("Número de gerações a calcular: ");
+                gen = in.nextInt();
+            } while (dim < 0 && gen < 0);
 
             //Criar Matriz Leslie com ficheiro
             System.out.println("Matriz de Leslie com ficheiro: ");
@@ -103,8 +108,7 @@ public class Project {
                     writer.write("Gerações: " + generations + "\n");
                     writer.write("Formato ficheiro gnuplot: " + format_gnuplot_files + "\n");
                     if (vec[0] == 1) {
-                        writer.write("Valor Próprio: " + "\n");
-//                        eigen_value();
+                        writer.write("Valor Próprio: " + eigen_value(MatrixWriteFile(args[args.length - 2], dim)) + "\n");
                     }
                     if (vec[1] == 1) {
                         writer.write("Dimensão da População: " + "\n");
@@ -118,8 +122,7 @@ public class Project {
                     writer.write("Gerações: " + generations + "\n");
                     writer.write("Formato ficheiro gnuplot: " + format_gnuplot_files + "\n");
                     if (vec[0] == 1) {
-                        writer.write("Valor Próprio: " + "\n");
-//                        eigen_value();
+                        writer.write("Valor Próprio: " + eigen_value(MatrixWriteFile(args[args.length - 2], dim)) + "\n");
                     }
                     if (vec[1] == 1) {
                         writer.write("Dimensão da População: " + "\n");
@@ -137,8 +140,6 @@ public class Project {
             }
         }
     }
-
-
 
     public static double[][] LeslieMatrix (int dim) {
         Scanner in = new Scanner(System.in);
@@ -170,6 +171,49 @@ public class Project {
     public static Matrix convertToMatrix(double[][] leslie) {
         Matrix leslie_matrix = new Basic2DMatrix(leslie);
         return leslie_matrix;
+    }
+
+    public static double[][] MatrixWriteFile(String filename, int dim) throws FileNotFoundException {
+        Scanner scanner = new Scanner(new File(filename));
+        String line = scanner.nextLine();
+        String[] quantity_population = line.split(",");
+        int len_quantity_population = quantity_population.length;
+
+        for (int i = 0; i < len_quantity_population; i++) {
+            quantity_population[i] = quantity_population[i].trim();
+            quantity_population[i] = quantity_population[i].substring(4);
+        }
+
+        line = scanner.nextLine();
+        String[] survival = line.split(",");
+        int len_survival = survival.length;
+
+        for (int i = 0; i < len_survival; i++) {
+            survival[i] = survival[i].trim();
+            survival[i] = survival[i].substring(3);
+        }
+
+        line = scanner.nextLine();
+        String[] fecundity = line.split(",");
+        int len_fecundity = fecundity.length;
+
+        for (int i = 0; i < len_fecundity; i++) {
+            fecundity[i] = fecundity[i].trim();
+            fecundity[i] = fecundity[i].substring(3);
+        }
+
+        double[][] matrixleslie = new double[len_fecundity][len_fecundity];
+
+        //Sobrevivência:
+        for (int i = 0; i < dim - 1; i++) {
+            matrixleslie[i + 1][i] = Double.parseDouble(survival[i]);
+        }
+        //Fecundidade
+        for (int j = 0; j < dim; j++) {
+            matrixleslie[0][j] = Double.parseDouble(fecundity[j]);
+        }
+
+        return matrixleslie;
     }
 
     public static Matrix LeslieMatrixFile(String filename, int dim) throws FileNotFoundException {
@@ -287,7 +331,7 @@ public class Project {
     public int numberOfGerations(){
         Scanner in = new Scanner(System.in);
 
-        System.out.print("Número de gerações a estimar");
+        System.out.print("Número de gerações a estimar: ");
         int geracoes = in.nextInt();
 
         return geracoes;
