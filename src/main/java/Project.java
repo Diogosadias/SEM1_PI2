@@ -484,9 +484,9 @@ public class Project {
     	
     	plot.write(String.format("set terminal %s\n", terminalOutput));
     	if(outputType >= 1 && outputType <= 3) {
+    		plot.write(String.format("system \"mkdir %s\"\n", outputDir));
     		plot.write(String.format("set output \"%s/%s\"\n", outputDir, outputFileName));
     	}
-    	plot.write(String.format("set encoding utf8\n"));
     	plot.write(String.format("set title \"%s\"\n", graphTitle));
     	plot.write(String.format("set xlabel \"%s\"\n", xLine));
     	plot.write(String.format("set ylabel \"%s\"\n", yLine));
