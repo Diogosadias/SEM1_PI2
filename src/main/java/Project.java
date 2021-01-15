@@ -23,7 +23,6 @@ public class Project {
         int gen = -1;
         int graph = -1;
         int save = -1;
-        int nVezes = 0;
         String fileName = "";
         
         //Modo interativo sem ficheiro
@@ -50,17 +49,25 @@ public class Project {
             System.out.println("Valores da população Inicial: ");
             double[][] population = new double[gen+1][1];
             for(int i = 0; i < gen+1; i++) {
-            	System.out.printf("Valor %d: \n", nVezes);
-            	population[i][0] = i+1;
-            	nVezes += 1;
+            	System.out.printf("Valor %d: \n", i);
+            	population[i][0] = in.nextDouble();
             }
 
             Matrix populationResult = dimPopulationinT(leslie, population, gen);
             System.out.println("Dimensão da população");
             System.out.println(populationResult);
             
+            double [] rateOfChange = new double [gen];
+            rateOfChange = rateofchange(leslie, population, gen);
             System.out.println("Taxa de variação ao longo dos anos: ");
+            System.out.println(rateOfChange);
             
+            System.out.println("Valor de classes: ");
+            double [] numberOfClasses = new double[dim];
+            for(int i = 0; i < dim; i++) {
+            	System.out.printf("Valor %d: ", i);
+            	numberOfClasses [i] = in.nextDouble();
+            }
             
             double [] graphResults = new double[gen];
             String graphTitle = "";
