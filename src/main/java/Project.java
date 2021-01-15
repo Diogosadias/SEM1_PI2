@@ -530,7 +530,7 @@ public class Project {
 
         for(int i = 1; i<t;i++){
 //            System.out.println(((totaldimPopulatotion(dimPopulationinT(leslie,population,i)) - totaldimPopulatotion(initialpopulation))-1.0) * 100);
-            result[i] = ((totaldimPopulatotion(dimPopulationinT(leslie,population,i)) - totaldimPopulatotion(initialpopulation))-1.0) * 100;
+            result[i] = ((totaldimPopulation(dimPopulationinT(leslie,population,i)) - totaldimPopulation(initialpopulation))-1.0) * 100;
         }
 
         return result;
