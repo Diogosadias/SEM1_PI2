@@ -230,6 +230,24 @@ public class Project {
                     }
                     if (vec[2] == 1) {
                         writer.write("Variação da População: " + "\n");
+                        //Escrever cabeçalho gerações
+                        int i=-1;
+                        writer.write("( " );
+                        for(i =1;i<dim;i++){
+                            writer.write(i +", " );
+                        }
+                        writer.write(""+ i +")" + "\n" );
+
+                        //Função vai receber array de double
+                        //Começar a escrever linha da dimensão
+
+                        double [] temp = new double [dim];
+                        temp=rateofchange((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),dim);
+                        writer.write("( " );
+                        for(i=0;i<dim-2;i++){
+                            writer.write(temp[i] + ", ");
+                        }
+                        writer.write(temp[i] +") " + "\n" );
                     }
                     writer.close();
                 } else {
@@ -264,12 +282,21 @@ public class Project {
                         //Escrever cabeçalho gerações
                         int i=-1;
                         writer.write("( " );
-                        for(i =0;i<dim-1;i++){
+                        for(i =1;i<dim;i++){
                             writer.write(i +", " );
                         }
                         writer.write(""+ i +")" + "\n" );
 
                         //Função vai receber array de double
+                        //Começar a escrever linha da dimensão
+
+                        double [] temp = new double [dim];
+                        temp=rateofchange((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),dim);
+                        writer.write("( " );
+                        for(i=0;i<dim-2;i++){
+                            writer.write(temp[i] + ", ");
+                        }
+                        writer.write(temp[i] +") " + "\n" );
                     }
                     writer.close();
                 }
