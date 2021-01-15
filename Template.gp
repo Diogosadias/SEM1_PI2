@@ -1,7 +1,7 @@
-set terminal png
-set output "outputs/Imagem.png"
-set title "Matriz"
-set xlabel "Individuos"
-set ylabel "Classes"
+set terminal dumb
+set output "outputs/aaaaa.txt"
+set title "Número Total De Individuos"
+set xlabel "Momento"
+set ylabel "Dimensão da população"
 set style data linespoints
-plot "Data.txt" "População"
+plot "Data.txt" title "Número Total De Individuos"

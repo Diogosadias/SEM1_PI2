@@ -46,16 +46,28 @@ public class Project {
             System.out.println("Vetor Próprio: ");
 //            System.out.printf("%.2f", eigen_value(leslie));
 
-            double[][] population = new double[dim][1];
-            for(int i = 0; i < dim; i++) {
-            	population[i][0] = i+1;
+            System.out.println("Valores da população Inicial: ");
+            double[][] population = new double[gen+1][1];
+            for(int i = 0; i < gen+1; i++) {
+            	System.out.printf("Valor %d: \n", i);
+            	population[i][0] = in.nextDouble();
             }
-            for(int i = 0; i < 1; i++) {
-            	population[0][i] = i+2;
-            }
+
             Matrix populationResult = dimPopulationinT(leslie, population, gen);
             System.out.println("Dimensão da população");
             System.out.println(populationResult);
+            
+            double [] rateOfChange = new double [gen];
+            rateOfChange = rateofchange(leslie, population, gen);
+            System.out.println("Taxa de variação ao longo dos anos: ");
+            System.out.println(rateOfChange);
+            
+            System.out.println("Valor de classes: ");
+            double [] numberOfClasses = new double[dim];
+            for(int i = 0; i < dim; i++) {
+            	System.out.printf("Valor %d: ", i);
+            	numberOfClasses [i] = in.nextDouble();
+            }
             
             double [] graphResults = new double[gen];
             String graphTitle = "";
@@ -210,10 +222,10 @@ public class Project {
                         //Começar a escrever linha da dimensão
                         writer.write("( " );
                         for(i=0;i<dim-1;i++){
-                            temp = totaldimPopulatotion(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
+                            temp = totaldimPopulation(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
                             writer.write(temp +", " );
                         }
-                        temp = totaldimPopulatotion(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
+                        temp = totaldimPopulation(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
                         writer.write(temp +") " + "\n" );
                     }
                     if (vec[2] == 1) {
@@ -241,10 +253,10 @@ public class Project {
                         //Começar a escrever linha da dimensão
                         writer.write("( " );
                         for(i=0;i<dim-1;i++){
-                            temp = totaldimPopulatotion(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
+                            temp = totaldimPopulation(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
                             writer.write(temp +", " );
                         }
-                        temp = totaldimPopulatotion(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
+                        temp = totaldimPopulation(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
                         writer.write(temp +") " + "\n" );
                     }
                     if (vec[2] == 1) {
@@ -475,7 +487,7 @@ public class Project {
      * Dimensão da população Reprodutora - Posso ter que multiplicar o valor por 2;
      * Recebe matrix e calcula a sua soma
      */
-    public static double totaldimPopulatotion(Matrix population){
+    public static double totaldimPopulation(Matrix population){
         return population.sum();
     }
 
@@ -520,14 +532,16 @@ public class Project {
      * Output : taxa de variação ao longo dos anos - Lista de valores entre anos
      */
 
-    public static void rateofchange(double[][] leslie,double[][] population, int t ){
-
+    public static double[] rateofchange(double[][] leslie,double[][] population, int t ){
+    	double [] result = new double[t];
         Matrix initialpopulation = convertToMatrix(population);
 
         for(int i = 1; i<t;i++){
-            System.out.println(((totaldimPopulatotion(dimPopulationinT(leslie,population,i)) - totaldimPopulatotion(initialpopulation))-1.0) * 100);
+//            System.out.println(((totaldimPopulatotion(dimPopulationinT(leslie,population,i)) - totaldimPopulatotion(initialpopulation))-1.0) * 100);
+            result[i] = ((totaldimPopulation(dimPopulationinT(leslie,population,i)) - totaldimPopulation(initialpopulation))-1.0) * 100;
         }
 
+        return result;
     }
     
     public static void createGraph(double[] matrix, int outputType, String graphTitle,
