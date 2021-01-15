@@ -249,7 +249,15 @@ public class Project {
                     }
                     if (vec[2] == 1) {
                         writer.write("Variação da População: " + "\n");
-//                        Função
+                        //Escrever cabeçalho gerações
+                        int i=-1;
+                        writer.write("( " );
+                        for(i =0;i<dim-1;i++){
+                            writer.write(i +", " );
+                        }
+                        writer.write(""+ i +")" + "\n" );
+
+                        //Função vai receber array de double
                     }
                     writer.close();
                 }
