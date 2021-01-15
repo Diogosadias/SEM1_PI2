@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -202,6 +203,23 @@ public class Project {
                     }
                     if (vec[1] == 1) {
                         writer.write("Dimensão da População: " + "\n");
+                        //Escrever cabeçalho gerações
+                        int i=-1;
+                        writer.write("( " );
+                        for(i =0;i<dim-1;i++){
+                            writer.write(i +", " );
+                        }
+                        writer.write(""+ i +")" + "\n" );
+                        double temp = -1.0;
+
+                        //Começar a escrever linha da dimensão
+                        writer.write("( " );
+                        for(i=0;i<dim-1;i++){
+                            temp = totaldimPopulatotion(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
+                            writer.write(temp +", " );
+                        }
+                        temp = totaldimPopulatotion(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
+                        writer.write(temp +") " + "\n" );
                     }
                     if (vec[2] == 1) {
                         writer.write("Variação da População: " + "\n");
@@ -216,7 +234,23 @@ public class Project {
                     }
                     if (vec[1] == 1) {
                         writer.write("Dimensão da População: " + "\n");
-//                        Função
+                        //Escrever cabeçalho gerações
+                        int i=-1;
+                        writer.write("( " );
+                        for(i =0;i<dim-1;i++){
+                            writer.write(i +", " );
+                            }
+                        writer.write(""+ i +")" + "\n" );
+                        double temp = -1.0;
+
+                        //Começar a escrever linha da dimensão
+                        writer.write("( " );
+                        for(i=0;i<dim-1;i++){
+                            temp = totaldimPopulatotion(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
+                            writer.write(temp +", " );
+                        }
+                        temp = totaldimPopulatotion(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
+                        writer.write(temp +") " + "\n" );
                     }
                     if (vec[2] == 1) {
                         writer.write("Variação da População: " + "\n");
@@ -261,6 +295,35 @@ public class Project {
     public static Matrix convertToMatrix(double[][] leslie) {
         Matrix leslie_matrix = new Basic2DMatrix(leslie);
         return leslie_matrix;
+    }
+
+    /***
+     *
+     * @param filename
+     * @param dim
+     * @return Matrix com a população inicial
+     */
+
+    public static double[][] getPopulationfromFile(String filename,int dim) throws FileNotFoundException {
+        Scanner scanner = new Scanner(new File(filename));
+        String line = scanner.nextLine();
+        //Verificar se é linha de dimensão de população if(line=='%x%')
+        String[] quantity_population = line.split(",");
+        int len_quantity_population = quantity_population.length;
+        int i=0;
+
+        for (i = 0; i < len_quantity_population; i++) {
+            quantity_population[i] = quantity_population[i].trim();
+            quantity_population[i] = quantity_population[i].substring(4);
+        }
+
+        double [][] matrixpop = new double[1][len_quantity_population];
+
+        for(i =0;i<len_quantity_population;i++){
+            matrixpop[0][i] = Double.parseDouble(quantity_population[i]);
+        }
+        return matrixpop;
+
     }
 
     public static double[][] MatrixWriteFile(String filename, int dim) throws FileNotFoundException {
@@ -418,7 +481,8 @@ public class Project {
      * Calculo da distribuição da população
      *
      */
-    public String distriPopulation(double[][] leslie, double[][] population, int generation, int t){
+    public List<String> distriPopulation(double[][] leslie, double[][] population, int t){
+
         //Criação da Matrix em T
         double [][] populationinT = new double[population.length][1];
         Matrix populationDistribution = convertToMatrix(populationinT);
@@ -427,9 +491,16 @@ public class Project {
         Matrix lesliematrix = convertToMatrix(leslie);
         Matrix populationInicial = convertToMatrix(population);
 
-        populationDistribution  = (lesliematrix.power(t)).multiply(populationInicial);
+        List <String> distribution= new ArrayList<>();
 
-        String distribution = populationDistribution.toString();
+        for (int i = 1; i <= t ; i++){
+
+            populationDistribution  = (lesliematrix.power(i)).multiply(populationInicial);
+
+            distribution.add(populationDistribution.toString());
+
+            populationInicial = populationDistribution;
+        }
 
         return distribution;
 
@@ -440,7 +511,7 @@ public class Project {
      * Variação da população nos entre o inicio e os ano final dado
      * Parametros:População inicial, Matrix leslie e t final
      *
-     * Taxa de variação segue a formula ((população ano t - população inicial) - 1) *100%
+     * Taxa de variação segue a formula ((população ano t - população inicial) - 1) *100
      *
      * Esta função apenas imprime os valores, para guardar podemos dar update a esta função e colocar a retornar uma lista
      * Output : taxa de variação ao longo dos anos - Lista de valores entre anos
