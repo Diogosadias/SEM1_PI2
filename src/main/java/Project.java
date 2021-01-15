@@ -384,10 +384,10 @@ public class Project {
             quantity_population[i] = quantity_population[i].substring(4);
         }
 
-        double [][] matrixpop = new double[1][len_quantity_population];
+        double [][] matrixpop = new double[len_quantity_population][1];
 
         for(i =0;i<len_quantity_population;i++){
-            matrixpop[0][i] = Double.parseDouble(quantity_population[i]);
+        	matrixpop[i][0] = Double.parseDouble(quantity_population[i]);
         }
         return matrixpop;
 
