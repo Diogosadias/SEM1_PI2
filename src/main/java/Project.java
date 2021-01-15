@@ -178,7 +178,8 @@ public class Project {
         if (args.length == 2) {
             do {
                 System.out.println("Número de grupos etários (dimensão): ");
-                dim = in.nextInt();
+                dim = getdimfromLeslieMatrixFile(args[1]);
+                System.out.println(dim); //Imprime mas não pede
                 System.out.println("Número de gerações a calcular: ");
                 gen = in.nextInt();
             } while (dim < 0 && gen < 0);
@@ -497,6 +498,49 @@ public class Project {
 
         System.out.println("Matriz de Leslie: ");
         return matrix;
+    }
+
+    public static int getdimfromLeslieMatrixFile(String filename) throws FileNotFoundException {
+
+        String[] vec = initial_vec(filename);
+
+        String[] survival = new String[0];
+        String[] fecundity = new String[0];
+        String[] quantity_population = new String[0];
+
+        Scanner scanner = new Scanner(new File(filename));
+        String line = "";
+
+        for (int k = 0; k < vec.length; k++) {
+            if (vec[k].equals("x")) {
+                line = scanner.nextLine();
+                quantity_population = line.split(",");
+
+                for (int i = 0; i < quantity_population.length; i++) {
+                    quantity_population[i] = quantity_population[i].trim();
+                    quantity_population[i] = quantity_population[i].substring(4);
+
+                }
+            } else if (vec[k].equals("s")) {
+                line = scanner.nextLine();
+                survival = line.split(",");
+
+                for (int i = 0; i < survival.length; i++) {
+                    survival[i] = survival[i].trim();
+                    survival[i] = survival[i].substring(3);
+                }
+            } else if (vec[k].equals("f")) {
+                line = scanner.nextLine();
+                fecundity = line.split(",");
+
+                for (int i = 0; i < fecundity.length; i++) {
+                    fecundity[i] = fecundity[i].trim();
+                    fecundity[i] = fecundity[i].substring(3);
+                }
+            }
+        }
+
+        return quantity_population.length;
     }
 
     public static String[] initial_vec(String filename) throws FileNotFoundException {
