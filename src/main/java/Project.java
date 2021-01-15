@@ -47,9 +47,9 @@ public class Project {
 //            System.out.printf("%.2f", eigen_value(leslie));
 
             System.out.println("Valores da população Inicial: ");
-            double[][] population = new double[gen+1][1];
-            for(int i = 0; i < gen+1; i++) {
-            	System.out.printf("Valor %d: \n", i);
+            double[][] population = new double[dim][1];
+            for(int i = 0; i < dim; i++) {
+            	System.out.printf("Valor %d: ", i);
             	population[i][0] = in.nextDouble();
             }
 
@@ -60,7 +60,9 @@ public class Project {
             double [] rateOfChange = new double [gen];
             rateOfChange = rateofchange(leslie, population, gen);
             System.out.println("Taxa de variação ao longo dos anos: ");
-            System.out.println(rateOfChange);
+            for(int i = 0; i < gen; i++) {
+            	System.out.println(rateOfChange[i]);
+            }
             
             System.out.println("Valor de classes: ");
             double [] numberOfClasses = new double[dim];
@@ -94,10 +96,33 @@ public class Project {
 	                yLine = "Dimensão da população";
 	            	break;
 	            case 2:
+	            	for(int i = 0; i < gen; i++) {
+	            		graphResults[i] = rateOfChange[i];
+	            	}
+	            	graphTitle = "Crescimento da população";
+	                resulType = "Crescimento da população";
+	                xLine = "Momento";
+	                yLine = "Variação";
 	            	break;
 	            case 3:
+	            	graphResults = new double[gen+1];
+	            	for(int i = 0; i < gen+1; i++) {
+	            		graphResults[i] = numberOfClasses[i];
+	            	}
+	            	graphTitle = "Número por Classe (não normalizado)";
+	                resulType = "Número por Classe";
+	                xLine = "Momento";
+	                yLine = "Classe";
 	            	break;
 	            case 4:
+	            	graphResults = new double[gen+1];
+	            	for(int i = 0; i < gen+1; i++) {
+	            		graphResults[i] = numberOfClasses[i];
+	            	}
+	            	graphTitle = "Número por Classe (normalizado)";
+	                resulType = "Número por Classe";
+	                xLine = "Momento";
+	                yLine = "Classe";
 	            	break;
 	            default:
 	            	System.out.println("Escolha inválida.");
@@ -563,7 +588,7 @@ public class Project {
     	double [] result = new double[t];
         Matrix initialpopulation = convertToMatrix(population);
 
-        for(int i = 1; i<t;i++){
+        for(int i = 0; i<t;i++){
 //            System.out.println(((totaldimPopulatotion(dimPopulationinT(leslie,population,i)) - totaldimPopulatotion(initialpopulation))-1.0) * 100);
             result[i] = ((totaldimPopulation(dimPopulationinT(leslie,population,i)) - totaldimPopulation(initialpopulation))-1.0) * 100;
         }
