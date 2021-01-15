@@ -22,6 +22,7 @@ public class Project {
         int gen = -1;
         int graph = -1;
         int save = -1;
+        int nVezes = 0;
         String fileName = "";
         
         //Modo interativo sem ficheiro
@@ -45,16 +46,20 @@ public class Project {
             System.out.println("Vetor Próprio: ");
 //            System.out.printf("%.2f", eigen_value(leslie));
 
-            double[][] population = new double[dim][1];
-            for(int i = 0; i < dim; i++) {
+            System.out.println("Valores da população Inicial: ");
+            double[][] population = new double[gen+1][1];
+            for(int i = 0; i < gen+1; i++) {
+            	System.out.printf("Valor %d: \n", nVezes);
             	population[i][0] = i+1;
+            	nVezes += 1;
             }
-            for(int i = 0; i < 1; i++) {
-            	population[0][i] = i+2;
-            }
+
             Matrix populationResult = dimPopulationinT(leslie, population, gen);
             System.out.println("Dimensão da população");
             System.out.println(populationResult);
+            
+            System.out.println("Taxa de variação ao longo dos anos: ");
+            
             
             double [] graphResults = new double[gen];
             String graphTitle = "";
@@ -441,14 +446,16 @@ public class Project {
      * Output : taxa de variação ao longo dos anos - Lista de valores entre anos
      */
 
-    public static void rateofchange(double[][] leslie,double[][] population, int t ){
-
+    public static double[] rateofchange(double[][] leslie,double[][] population, int t ){
+    	double [] result = new double[t];
         Matrix initialpopulation = convertToMatrix(population);
 
         for(int i = 1; i<t;i++){
-            System.out.println(((totaldimPopulatotion(dimPopulationinT(leslie,population,i)) - totaldimPopulatotion(initialpopulation))-1.0) * 100);
+//            System.out.println(((totaldimPopulatotion(dimPopulationinT(leslie,population,i)) - totaldimPopulatotion(initialpopulation))-1.0) * 100);
+            result[i] = ((totaldimPopulatotion(dimPopulationinT(leslie,population,i)) - totaldimPopulatotion(initialpopulation))-1.0) * 100;
         }
 
+        return result;
     }
     
     public static void createGraph(double[] matrix, int outputType, String graphTitle,
