@@ -40,6 +40,7 @@ public class Project {
             Matrix matrix_leslie = convertToMatrix(leslie);
             System.out.println(matrix_leslie);
 
+
             System.out.println("Valor Próprio: ");
             System.out.println(eigen_value(leslie));
             
@@ -192,23 +193,18 @@ public class Project {
         //Modo não interativo com ficheiro: java -jar nome_programa.jar -t XXX -g Y -e -v -r nome_ficheiro_entrada.txt nome_ficheiro_saida.txt
         if (args.length > 2) {
             String generations_aux = args[1];
-            int generations = Integer.parseInt(generations_aux);
+            int generations = Integer.parseInt(generations_aux); //gerações a calcular
             String format_gnuplot_files_aux = args[3];
-            int format_gnuplot_files = Integer.parseInt(format_gnuplot_files_aux);
+            int format_gnuplot_files = Integer.parseInt(format_gnuplot_files_aux); //formato do ficheiro a executar
 
             do {
                 System.out.println("Número de grupos etários (dimensão): ");
-                dim = in.nextInt();
+                dim = getdimfromLeslieMatrixFile(args[args.length-2]);
+                System.out.println(dim); //Grupos etários
             } while (dim < 0);
 
-            //Só usar isto para imprimir quando tiver os métodos prontos:
-            // 1). Calcular valor e vetor próprio;
-            // Eu
-            // 2). Calcular dimensão da população a cada geração;
-            // Tiago
-            // 3). Calcular variação da população entre gerações;
-            // Tiago
 
+            // Verificar quais os calculos a serem pedidos entre( -e,-v e -r)
             int[] vec = new int[3];
             for (int i = 0; i < args.length; i++) {
                 if (args[i].equals("-e")) {
@@ -230,11 +226,20 @@ public class Project {
                 if (file.createNewFile()) {
                     System.out.println("Ficheiro criado: " + file.getName());
                     writer.write("Gerações: " + generations + "\n");
+                    writer.write("\n");
                     writer.write("Formato ficheiro gnuplot: " + format_gnuplot_files + "\n");
+                    writer.write("\n");
+
                     if (vec[0] == 1) {
                         writer.write("Valor Próprio: " + eigen_value(MatrixWriteFile(args[args.length - 2], dim)) + "\n");
+                        writer.write("\n");
+
                     }
                     if (vec[1] == 1) {
+
+                        /*
+                        * Refazer para ficar igual a ficheiro de saida
+                        * */
                         writer.write("Dimensão da População: " + "\n");
                         //Escrever cabeçalho gerações
                         int i=-1;
@@ -255,6 +260,10 @@ public class Project {
                         writer.write(temp +") " + "\n" );
                     }
                     if (vec[2] == 1) {
+
+                        /*
+                         * Refazer para ficar igual a ficheiro de saida
+                         * */
                         writer.write("Variação da População: " + "\n");
                         //Escrever cabeçalho gerações
                         int i=-1;
