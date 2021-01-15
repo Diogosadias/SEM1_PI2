@@ -222,10 +222,10 @@ public class Project {
                         //Começar a escrever linha da dimensão
                         writer.write("( " );
                         for(i=0;i<dim-1;i++){
-                            temp = totaldimPopulatotion(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
+                            temp = totaldimPopulation(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
                             writer.write(temp +", " );
                         }
-                        temp = totaldimPopulatotion(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
+                        temp = totaldimPopulation(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
                         writer.write(temp +") " + "\n" );
                     }
                     if (vec[2] == 1) {
@@ -253,10 +253,10 @@ public class Project {
                         //Começar a escrever linha da dimensão
                         writer.write("( " );
                         for(i=0;i<dim-1;i++){
-                            temp = totaldimPopulatotion(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
+                            temp = totaldimPopulation(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
                             writer.write(temp +", " );
                         }
-                        temp = totaldimPopulatotion(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
+                        temp = totaldimPopulation(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
                         writer.write(temp +") " + "\n" );
                     }
                     if (vec[2] == 1) {
@@ -479,7 +479,7 @@ public class Project {
      * Dimensão da população Reprodutora - Posso ter que multiplicar o valor por 2;
      * Recebe matrix e calcula a sua soma
      */
-    public static double totaldimPopulatotion(Matrix population){
+    public static double totaldimPopulation(Matrix population){
         return population.sum();
     }
 
