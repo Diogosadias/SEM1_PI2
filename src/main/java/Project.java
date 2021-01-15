@@ -437,41 +437,52 @@ public class Project {
     }
 
     public static Matrix LeslieMatrixFile(String filename, int dim) throws FileNotFoundException {
+
+        String[] vec = initial_vec(filename);
+
+        String[] survival = new String[0];
+        String[] fecundity = new String[0];
+        String[] quantity_population = new String[0];
+
         Scanner scanner = new Scanner(new File(filename));
-        String line = scanner.nextLine();
-        String[] quantity_population = line.split(",");
-        int len_quantity_population = quantity_population.length;
+        String line = "";
 
-        System.out.println("Quantidade de população: ");
-        for (int i = 0; i < len_quantity_population; i++) {
-            quantity_population[i] = quantity_population[i].trim();
-            quantity_population[i] = quantity_population[i].substring(4);
-            System.out.println(quantity_population[i]);
+        for (int k = 0; k < vec.length; k++) {
+            if (vec[k].equals("x")) {
+                line = scanner.nextLine();
+                System.out.println("Quantidade de população: ");
+                quantity_population = line.split(",");
+
+                for (int i = 0; i < quantity_population.length; i++) {
+                    quantity_population[i] = quantity_population[i].trim();
+                    quantity_population[i] = quantity_population[i].substring(4);
+
+                    System.out.println(quantity_population[i]);
+                }
+            } else if (vec[k].equals("s")) {
+                line = scanner.nextLine();
+                System.out.println("Sobrevivência: ");
+                survival = line.split(",");
+
+                for (int i = 0; i < survival.length; i++) {
+                    survival[i] = survival[i].trim();
+                    survival[i] = survival[i].substring(3);
+                    System.out.println(survival[i]);
+                }
+            } else if (vec[k].equals("f")) {
+                line = scanner.nextLine();
+                System.out.println("Fecundidade: "); //Dimensão
+                fecundity = line.split(",");
+
+                for (int i = 0; i < fecundity.length; i++) {
+                    fecundity[i] = fecundity[i].trim();
+                    fecundity[i] = fecundity[i].substring(3);
+                    System.out.println(fecundity[i]);
+                }
+            }
         }
 
-        System.out.println("Sobrevivência: ");
-        line = scanner.nextLine();
-        String[] survival = line.split(",");
-        int len_survival = survival.length;
-
-        for (int i = 0; i < len_survival; i++) {
-            survival[i] = survival[i].trim();
-            survival[i] = survival[i].substring(3);
-            System.out.println(survival[i]);
-        }
-
-        System.out.println("Fecundidade: "); //Dimensão
-        line = scanner.nextLine();
-        String[] fecundity = line.split(",");
-        int len_fecundity = fecundity.length;
-
-        for (int i = 0; i < len_fecundity; i++) {
-            fecundity[i] = fecundity[i].trim();
-            fecundity[i] = fecundity[i].substring(3);
-            System.out.println(fecundity[i]);
-        }
-
-        double[][] matrixleslie = new double[len_fecundity][len_fecundity];
+        double[][] matrixleslie = new double[fecundity.length][fecundity.length];
 
         //Sobrevivência:
         for (int i = 0; i < dim - 1; i++) {
@@ -486,6 +497,31 @@ public class Project {
 
         System.out.println("Matriz de Leslie: ");
         return matrix;
+    }
+
+    public static String[] initial_vec(String filename) throws FileNotFoundException {
+        Scanner scanner = new Scanner(new File(filename));
+        String[] vec = new String[3];
+
+        String line = scanner.nextLine();
+
+        String[] firstLine = line.split("0");
+
+        line = scanner.nextLine();
+        String[] secondLine = line.split("0");
+
+        line = scanner.nextLine();
+        String [] thirdLine = line.split("0");
+
+        vec[0] = firstLine[0];
+        vec[1] = secondLine[0];
+        vec[2] = thirdLine[0];
+
+        for (int i = 0; i < vec.length; i++) {
+            System.out.println(vec[i]);
+        }
+
+        return vec;
     }
 
     public static double eigen_value(double[][] matrix_leslie) {
