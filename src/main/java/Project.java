@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -413,7 +414,8 @@ public class Project {
      * Calculo da distribuição da população
      *
      */
-    public String distriPopulation(double[][] leslie, double[][] population, int generation, int t){
+    public List<String> distriPopulation(double[][] leslie, double[][] population, int t){
+
         //Criação da Matrix em T
         double [][] populationinT = new double[population.length][1];
         Matrix populationDistribution = convertToMatrix(populationinT);
@@ -422,9 +424,16 @@ public class Project {
         Matrix lesliematrix = convertToMatrix(leslie);
         Matrix populationInicial = convertToMatrix(population);
 
-        populationDistribution  = (lesliematrix.power(t)).multiply(populationInicial);
+        List <String> distribution= new ArrayList<>();
 
-        String distribution = populationDistribution.toString();
+        for (int i = 1; i <= t ; i++){
+
+            populationDistribution  = (lesliematrix.power(i)).multiply(populationInicial);
+
+            distribution.add(populationDistribution.toString());
+
+            populationInicial = populationDistribution;
+        }
 
         return distribution;
 
