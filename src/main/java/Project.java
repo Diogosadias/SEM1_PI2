@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 import java.util.Scanner;
 
 public class Project {
@@ -409,22 +410,25 @@ public class Project {
 
 
     /***
-     * Número de gerações a estimar
-     *
-     */
-    public int numberOfGerations(){
-        Scanner in = new Scanner(System.in);
-
-        System.out.print("Número de gerações a estimar: ");
-        int geracoes = in.nextInt();
-
-        return geracoes;
-    }
-
-    /***
      * Calculo da distribuição da população
      *
      */
+    public String distriPopulation(double[][] leslie, double[][] population, int generation, int t){
+        //Criação da Matrix em T
+        double [][] populationinT = new double[population.length][1];
+        Matrix populationDistribution = convertToMatrix(populationinT);
+
+        //Conversao em Matrizes para facilitar calculos
+        Matrix lesliematrix = convertToMatrix(leslie);
+        Matrix populationInicial = convertToMatrix(population);
+
+        populationDistribution  = (lesliematrix.power(t)).multiply(populationInicial);
+
+        String distribution = populationDistribution.toString();
+
+        return distribution;
+
+    }
 
 
     /***
