@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -45,7 +46,7 @@ public class Project {
             System.out.println(eigen_value(leslie));
             
             System.out.println("Vetor Próprio: ");
-//            System.out.printf("%.2f", eigen_value(leslie));
+            System.out.println(Arrays.toString(eigen_vec(leslie)));
 
             System.out.println("Valores da população Inicial: ");
             double[][] population = new double[dim][1];
@@ -601,6 +602,46 @@ public class Project {
 
         return max_eigen_value;
     }
+
+    public static double[] eigen_vec(double[][] matrix_leslie) {
+        int count = 0;
+
+        // Criar objeto do tipo Matriz
+        Matrix a = new Basic2DMatrix(matrix_leslie);
+
+        //Obtem valores e vetores próprios fazendo "Eigen Decomposition"
+        EigenDecompositor eigenD = new EigenDecompositor(a);
+        Matrix[] mattD = eigenD.decompose();
+
+        //Converte objeto Matrix (duas matrizes) para array Java
+        double[][] matA = mattD[0].toDenseMatrix().toArray();
+        double[][] matB = mattD[1].toDenseMatrix().toArray();
+
+        double max_eigen_value = -1;
+
+        //Faz a contagem para saber em que posição está o valor próprio
+        for (int i = 0; i < matB.length; i++) {
+            for (int j = 0; j < matB.length; j++) {
+                if (max_eigen_value < matB[i][j]) {
+                    count++;
+                    max_eigen_value = matB[i][j];
+                }
+            }
+        }
+        //Matriz A:
+        double[] eigen_vec = new double[matA.length];
+
+        if (count > 0) {
+            for (int i = 0; i < matA.length; i++) {
+                eigen_vec[i] = matA[i][count - 1];
+            }
+        } else {
+            System.out.println("Line for eigen vector not found.");
+        }
+
+        return eigen_vec;
+    }
+
 
     /***
      * Calcular dimensão de População em Determinado momento
