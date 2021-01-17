@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class Project {
@@ -34,30 +35,36 @@ public class Project {
                 System.out.println("Número de gerações a calcular: ");
                 gen = in.nextInt();
             } while (dim < 0 && gen < 0);
-
+            
             //Criar Matriz Leslie
             double[][] leslie = LeslieMatrix(dim);
             System.out.println("Matriz de Leslie: ");
             Matrix matrix_leslie = convertToMatrix(leslie);
             System.out.println(matrix_leslie);
-
-
-            System.out.println("Valor Próprio: ");
-            System.out.println(eigen_value(leslie));
             
+            double eigenvalue = eigen_value(leslie);
+            System.out.println("Valor Próprio: ");
+            System.out.println(eigenvalue);
+            
+            double [] eigenvector = eigen_vec(leslie);
             System.out.println("Vetor Próprio: ");
-            System.out.println(Arrays.toString(eigen_vec(leslie)));
-
+            System.out.println(Arrays.toString(eigenvector));
+            
             System.out.println("Valores da população Inicial: ");
             double[][] population = new double[dim][1];
             for(int i = 0; i < dim; i++) {
-            	System.out.printf("Valor %d: ", i);
             	population[i][0] = in.nextDouble();
             }
-
-            Matrix populationResult = dimPopulationinT(leslie, population, gen);
-            System.out.println("Dimensão da população");
-            System.out.println(populationResult);
+            
+            double[] totalPopulationChange = new double[gen+1];
+            for(int i = 0; i <= gen; i++) {
+	            Matrix populationResult = dimPopulationinT(leslie, population, i);
+	            totalPopulationChange[i] = totaldimPopulation(populationResult);
+	            System.out.println("Dimensão da população em t = " + i);
+	            System.out.println(populationResult);
+	            System.out.println("Total da população em t = " + i);
+	            System.out.println(totalPopulationChange[i]);
+            }
             
             double [] rateOfChange = new double [gen];
             rateOfChange = rateofchange(leslie, population, gen);
@@ -67,10 +74,10 @@ public class Project {
             }
             
             System.out.println("Valor de classes: ");
-            double [] numberOfClasses = new double[dim];
-            for(int i = 0; i < dim; i++) {
-            	System.out.printf("Valor %d: ", i);
-            	numberOfClasses [i] = in.nextDouble();
+            double [][] numberOfClasses = new double[gen+1][dim];
+            for(int i = 0; i <= gen; i++) {
+            	numberOfClasses [i] = dimPopulationinT(leslie, population, i).getColumn(0).toDenseVector().toArray();
+            	System.out.println(Arrays.toString(numberOfClasses[i]));
             }
             
             double [] graphResults = new double[gen];
@@ -90,7 +97,7 @@ public class Project {
 	            case 1:
 	            	graphResults = new double[gen+1];
 	            	for(int i = 0; i < gen+1; i++) {
-	            		graphResults[i] = populationResult.get(i, 0);
+	            		graphResults[i] = totalPopulationChange[i];
 	            	}
 	            	graphTitle = "Número Total De Individuos";
 	                resulType = "Número Total De Individuos";
@@ -109,7 +116,7 @@ public class Project {
 	            case 3:
 	            	graphResults = new double[gen+1];
 	            	for(int i = 0; i < gen+1; i++) {
-	            		graphResults[i] = numberOfClasses[i];
+	            		graphResults[i] = numberOfClasses[0][i];
 	            	}
 	            	graphTitle = "Número por Classe (não normalizado)";
 	                resulType = "Número por Classe";
@@ -119,7 +126,7 @@ public class Project {
 	            case 4:
 	            	graphResults = new double[gen+1];
 	            	for(int i = 0; i < gen+1; i++) {
-	            		graphResults[i] = numberOfClasses[i];
+	            		graphResults[i] = numberOfClasses[0][i];
 	            	}
 	            	graphTitle = "Número por Classe (normalizado)";
 	                resulType = "Número por Classe";
@@ -171,6 +178,7 @@ public class Project {
             	}
             	createGraph(graphResults, save, graphTitle, resulType, xLine, yLine, fileName);
             }
+            creatingTxtFileGraph(leslie, gen, totalPopulationChange, rateOfChange, numberOfClasses, eigenvalue, eigenvector);
         }
 
         //FALTA UM MÉTODO PARA VER A DIMENSÃO DE CADA LINHA NO FICHEIRO PQ NÃO É SUPOSTO PERGUNTAR QUANDO ARGS.LENGTH == 2 E > 2
@@ -655,13 +663,12 @@ public class Project {
         //Criação da Matrix em T
         double [][] populationinT = new double[population.length][1];
         Matrix populationinTMatrix = convertToMatrix(populationinT);
-
+    	
         //Conversao em Matrizes para facilitar calculos
         Matrix lesliematrix = convertToMatrix(leslie);
         Matrix populationInicial = convertToMatrix(population);
-
+    	
         populationinTMatrix  = (lesliematrix.power(t)).multiply(populationInicial);
-
         return populationinTMatrix;
     }
 
@@ -708,21 +715,28 @@ public class Project {
      * Variação da população nos entre o inicio e os ano final dado
      * Parametros:População inicial, Matrix leslie e t final
      *
-     * Taxa de variação segue a formula ((população ano t - população inicial) - 1) *100
+     * Taxa de variação segue a formula população ano t+1/população no ano t
      *
-     * Esta função apenas imprime os valores, para guardar podemos dar update a esta função e colocar a retornar uma lista
      * Output : taxa de variação ao longo dos anos - Lista de valores entre anos
      */
-
-    public static double[] rateofchange(double[][] leslie,double[][] population, int t ){
-    	double [] result = new double[t];
-        Matrix initialpopulation = convertToMatrix(population);
-
-        for(int i = 0; i<t;i++){
-//            System.out.println(((totaldimPopulatotion(dimPopulationinT(leslie,population,i)) - totaldimPopulatotion(initialpopulation))-1.0) * 100);
-            result[i] = ((totaldimPopulation(dimPopulationinT(leslie,population,i)) - totaldimPopulation(initialpopulation))-1.0) * 100;
-        }
-
+    
+    public static double [] rateofchange(double[][] leslie,double[][] population, int t ){
+    	double result [] = new double [t];
+    	
+    	for(int i = 0; i < t; i++) {
+	    	double value1 = 0;
+	    	double value2 = 0;
+	    	
+	    	value1 = totaldimPopulation(dimPopulationinT(leslie,population,i));
+	    	value2 = totaldimPopulation(dimPopulationinT(leslie,population,i+1));
+	    	
+	    	if(value1 == 0) {
+	    		result [i] = 0;
+	    	} else {
+	    		result [i] = value2/value1;
+	    	}
+    	}
+    			
         return result;
     }
     
@@ -783,40 +797,74 @@ public class Project {
     public static void creatingDataFile(double[] matrix) throws IOException {
     	FileWriter data = new FileWriter(dataNameFile);
     	for(int i = 0; i < matrix.length; i++) {
-    		data.write(String.format("%d %.2f\n", i, matrix[i]));
+    		data.write(String.format(Locale.US, "%d %.2f\n", i, matrix[i]));
     	}
     	data.close();
     }
     
-    public static void creatingTxtFileGraph(Matrix lesliMatrix, int gen, double dimPopulation, 
-    		double rateOfChange, double classes, double eigenvalue, double eigenvector) throws IOException {
+    public static void creatingTxtFileGraph(double[][] lesliMatrix, int gen, double[] dimPopulation, 
+    		double[] rateOfChange, double[][] classes, double eigenvalue, double[] eigenvector) throws IOException {
     	FileWriter result = new FileWriter("TextGraphResult.txt");
     	
     	result.write(String.format("K=%d\n", gen));
-    	result.write(String.format("Matriz de Leslie"));
-    	result.write(lesliMatrix.toString());
+    	result.write(String.format("Matriz de Leslie\n"));
+    	for(int i = 0; i < lesliMatrix.length; i++) {
+    		for(int j = 0; j < lesliMatrix.length; j++) {
+    			if(j > 0) {
+    				result.write(", ");
+    			}
+    			result.write(String.format(Locale.US, "%.2f", lesliMatrix[i][j]));
+    		}
+    		result.write(String.format("\n"));
+    	}
     	result.write(String.format("\nNumero total de individuos\n"));
     	result.write(String.format("(t, Nt)\n"));
     	for(int i = 0; i < gen+1; i++) {
-    		result.write(String.format("(%d, %.2f)\n", gen, dimPopulation));
+    		result.write(String.format(Locale.US, "(%d, %.2f)\n", i, dimPopulation[i]));
     	}
     	result.write(String.format("\n\nCrescimento da população\n"));
     	result.write(String.format("(t, delta_t)\n"));
     	for(int i = 0; i < gen; i++) {
-    		result.write(String.format("(%d, %.2f)\n", gen, rateOfChange));
+    		result.write(String.format(Locale.US, "(%d, %.2f)\n", i, rateOfChange[i]));
     	}
     	result.write(String.format("\n\nNumero por classe (não normalizado)\n"));
-    	result.write(String.format("(t, x1, x2, x3, 4)\n"));
-    	for(int i = 0; i < gen; i++) {
-    		result.write(String.format("(%d, %.2f)\n", gen, classes));
+    	result.write(String.format("%s\n", getHeader(lesliMatrix.length)));
+    	for(int i = 0; i < gen+1; i++) {
+    		result.write(String.format("(%d", i));
+    		for(int j = 0; j < lesliMatrix.length; j++) {
+    			result.write(String.format(Locale.US, ", %.2f", classes[i][j]));
+    		}
+    		result.write(String.format(")\n"));
     	}
     	result.write(String.format("\n\nNumero por classe (normalizado)\n"));
-    	result.write(String.format("(t, x1, x2, x3, 4)\n"));
-    	for(int i = 0; i < gen; i++) {
-    		result.write(String.format("(%d, %.2f)\n", gen, classes));
+    	result.write(String.format("%s\n", getHeader(lesliMatrix.length)));
+    	for(int i = 0; i < gen+1; i++) {
+    		result.write(String.format("(%d", i));
+    		for(int j = 0; j < lesliMatrix.length; j++) {
+    			result.write(String.format(Locale.US, ", 100*%.2f/%.2f", classes[i][j], dimPopulation[i]));
+    		}
+    		result.write(String.format(")\n"));
     	}
     	result.write(String.format("\n\nMaior valor próprio e vetor associado\n"));
-    	result.write(String.format("lambda=%.2f\n", eigenvalue));
-    	result.write(String.format("vetor proprio associado=%.2f\n", eigenvector));
+    	result.write(String.format(Locale.US, "lambda=%.4f\n", eigenvalue));
+    	result.write(String.format("vetor proprio associado=("));
+    	for(int i = 0; i < eigenvector.length; i++) {
+    		if(i > 0) {
+    			result.write(", ");
+    		}
+    		result.write(String.format(Locale.US, "%.2f", eigenvector[i]));
+    	}
+    	result.write(")\n");
+    	result.close();
+    }
+    
+    public static String getHeader(int length) {
+    	String header = "(t";
+    	for(int i = 0; i < length; i ++) {
+    		header += String.format(", x%d", i+1);
+    	}
+    	header += ")";
+    	
+    	return header;
     }
 }
