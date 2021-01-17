@@ -789,7 +789,34 @@ public class Project {
     }
     
     public static void creatingTxtFileGraph(Matrix lesliMatrix, int gen, double dimPopulation, 
-    		double rateOfChange, double classes, double eigenvalue, double vector) throws IOException {
+    		double rateOfChange, double classes, double eigenvalue, double eigenvector) throws IOException {
     	FileWriter result = new FileWriter("TextGraphResult.txt");
+    	
+    	result.write(String.format("K=%d\n", gen));
+    	result.write(String.format("Matriz de Leslie"));
+    	result.write(lesliMatrix.toString());
+    	result.write(String.format("\nNumero total de individuos\n"));
+    	result.write(String.format("(t, Nt)\n"));
+    	for(int i = 0; i < gen+1; i++) {
+    		result.write(String.format("(%d, %.2f)\n", gen, dimPopulation));
+    	}
+    	result.write(String.format("\n\nCrescimento da população\n"));
+    	result.write(String.format("(t, delta_t)\n"));
+    	for(int i = 0; i < gen; i++) {
+    		result.write(String.format("(%d, %.2f)\n", gen, rateOfChange));
+    	}
+    	result.write(String.format("\n\nNumero por classe (não normalizado)\n"));
+    	result.write(String.format("(t, x1, x2, x3, 4)\n"));
+    	for(int i = 0; i < gen; i++) {
+    		result.write(String.format("(%d, %.2f)\n", gen, classes));
+    	}
+    	result.write(String.format("\n\nNumero por classe (normalizado)\n"));
+    	result.write(String.format("(t, x1, x2, x3, 4)\n"));
+    	for(int i = 0; i < gen; i++) {
+    		result.write(String.format("(%d, %.2f)\n", gen, classes));
+    	}
+    	result.write(String.format("\n\nMaior valor próprio e vetor associado\n"));
+    	result.write(String.format("lambda=%.2f\n", eigenvalue));
+    	result.write(String.format("vetor proprio associado=%.2f\n", eigenvector));
     }
 }
