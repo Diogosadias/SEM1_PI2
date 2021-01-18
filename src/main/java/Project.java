@@ -256,110 +256,121 @@ public class Project {
                 System.out.println(Arrays.toString(numberOfClasses[i]));
             }
 
-            double [] graphResults = new double[gen];
+            double [][] graphResults = new double [1][1];
             String graphTitle = "";
             String resulType = "";
             String xLine = "";
             String yLine = "";
+            int graphType = -1;
             while (graph == -1){
-                System.out.println("Qual dos gráficos deseja gerar: ");
-                System.out.println(" 1-Número total de individuos");
-                System.out.println(" 2-Crescimento da população");
-                System.out.println(" 3-Numero por classe (não normalizado)");
-                System.out.println(" 4-Numero por classe (normalizado)");
-                graph = in.nextInt();
-
-                switch(graph) {
-                    case 1:
-                        graphResults = new double[gen+1];
-                        for(int i = 0; i < gen+1; i++) {
-                            graphResults[i] = totalPopulationChange[i];
-                        }
-                        graphTitle = "Número Total De Individuos";
-                        resulType = "Número Total De Individuos";
-                        xLine = "Momento";
-                        yLine = "Dimensão da população";
-                        break;
-                    case 2:
-                        for(int i = 0; i < gen; i++) {
-                            graphResults[i] = rateOfChange[i];
-                        }
-                        graphTitle = "Crescimento da população";
-                        resulType = "Crescimento da população";
-                        xLine = "Momento";
-                        yLine = "Variação";
-                        break;
-                    case 3:
-                        graphResults = new double[gen+1];
-                        for(int i = 0; i < gen+1; i++) {
-                            graphResults[i] = numberOfClasses[0][i];
-                        }
-                        graphTitle = "Número por Classe (não normalizado)";
-                        resulType = "Número por Classe";
-                        xLine = "Momento";
-                        yLine = "Classe";
-                        break;
-                    case 4:
-                        graphResults = new double[gen+1];
-                        for(int i = 0; i < gen+1; i++) {
-                            graphResults[i] = numberOfClasses[0][i];
-                        }
-                        graphTitle = "Número por Classe (normalizado)";
-                        resulType = "Número por Classe";
-                        xLine = "Momento";
-                        yLine = "Classe";
-                        break;
-                    default:
-                        System.out.println("Escolha inválida.");
-                        graph = -1;
-                        break;
-                }
+	            System.out.println("Qual dos gráficos deseja gerar: ");
+	            System.out.println(" 1-Número total de individuos");
+	            System.out.println(" 2-Crescimento da população");
+	            System.out.println(" 3-Numero por classe (não normalizado)");
+	            System.out.println(" 4-Numero por classe (normalizado)");
+	            graph = in.nextInt();
+	
+	            switch(graph) {
+	            case 1:
+	            	graphResults = new double[1][gen+1];
+	            	for(int i = 0; i < gen+1; i++) {
+	            		graphResults[0][i] = totalPopulationChange[i];
+	            	}
+	            	graphTitle = "Número Total De Individuos";
+	                resulType = "Número Total De Individuos";
+	                xLine = "Momento";
+	                yLine = "Dimensão da população";
+	                graphType = 1;
+	            	break;
+	            case 2:
+	            	graphResults = new double[1][gen];
+	            	for(int i = 0; i < gen; i++) {
+	            		graphResults[0][i] = rateOfChange[i];
+	            	}
+	            	graphTitle = "Crescimento da população";
+	                resulType = "Crescimento da população";
+	                xLine = "Momento";
+	                yLine = "Variação";
+	                graphType = 2;
+	            	break;
+	            case 3:
+	            	graphResults = new double[gen+1][dim];
+	            	for(int i = 0; i < gen+1; i++) {
+	            		for(int j = 0; j < dim; j++) {
+	            			graphResults[i][j] = numberOfClasses[i][j];
+	            		}
+	            	}
+	            	graphTitle = "Número por Classe (não normalizado)";
+	                resulType = "Número por Classe";
+	                xLine = "Momento";
+	                yLine = "Classe";
+	                graphType = 3;
+	            	break;
+	            case 4:
+	            	graphResults = new double[gen+1][dim];
+	            	for(int i = 0; i < gen+1; i++) {
+	            		double total = totalPopulationChange[i];
+	            		for(int j = 0; j < dim; j++) {
+	            			if(total == 0) {
+	            				graphResults[i][j] = 0; 
+	            			} else {
+	            				graphResults[i][j] = 100*numberOfClasses[i][j]/total;
+	            			}
+	            		}
+	            	}
+	            	graphTitle = "Número por Classe (normalizado)";
+	                resulType = "Número por Classe";
+	                xLine = "Momento";
+	                yLine = "Classe";
+	                graphType = 4;
+	            	break;
+	            default:
+	            	System.out.println("Escolha inválida.");
+	            	graph = -1;
+	            	break;
+	            }
             }
             createGraph(graphResults, 0, graphTitle, resulType, xLine, yLine, "");
-
+            
             while (save == -1){
-                System.out.println("Guardar como: ");
-                System.out.println(" 1-png");
-                System.out.println(" 2-txt");
-                System.out.println(" 3-eps");
-                System.out.println(" 0-Sair sem guardar");
-                save = in.nextInt();
-
-                if(save < 0 || save > 3) {
-                    System.out.println("Escolha inválida.");
-                    save = -1;
-                }
+	            System.out.println("Guardar como: ");
+	            System.out.println(" 1-png");
+	            System.out.println(" 2-txt");
+	            System.out.println(" 3-eps");
+	            System.out.println(" 0-Sair sem guardar");
+	            save = in.nextInt();
+	            
+	            if(save < 0 || save > 3) {
+	            	System.out.println("Escolha inválida.");
+	            	save = -1;
+	            }
             }
             if(save != 0) {
-                System.out.println("Nome do ficheiro: ");
-                if(in.hasNextLine()) {
-                    in.nextLine();
-                }
-                fileName = in.nextLine();
-
-                String defaultExtension = "";
-                switch (save) {
-                    case 1:
-                        defaultExtension = ".png";
-                        break;
-                    case 2:
-                        defaultExtension = ".txt";
-                        break;
-                    case 3:
-                        defaultExtension = ".eps";
-                        break;
-                }
-                if(!fileName.toLowerCase().endsWith(defaultExtension)) {
-                    fileName = fileName + defaultExtension;
-                }
-                createGraph(graphResults, save, graphTitle, resulType, xLine, yLine, fileName);
+            	System.out.println("Nome do ficheiro: ");
+            	if(in.hasNextLine()) {
+            		in.nextLine();
+            	}
+            	fileName = in.nextLine();
+            	
+            	String defaultExtension = "";
+            	switch (save) {
+            	case 1:
+            		defaultExtension = ".png";
+            		break;
+            	case 2:
+            		defaultExtension = ".txt";
+            		break;
+            	case 3:
+            		defaultExtension = ".eps";
+            		break;
+            	}
+            	if(!fileName.toLowerCase().endsWith(defaultExtension)) {
+            		fileName = fileName + defaultExtension;
+            	}
+            	createGraph(graphResults, save, graphTitle, resulType, xLine, yLine, fileName);
             }
             creatingTxtFileGraph(leslie, gen, totalPopulationChange, rateOfChange, numberOfClasses, eigenvalue, eigenvector);
-
-
         }
-
-
 
         //Modo não interativo com ficheiro: java -jar nome_programa.jar -t XXX -g Y -e -v -r nome_ficheiro_entrada.txt nome_ficheiro_saida.txt
         if (args.length > 2) {
