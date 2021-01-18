@@ -81,11 +81,12 @@ public class Project {
             	System.out.println(Arrays.toString(numberOfClasses[i]));
             }
             
-            double [] graphResults = new double[gen];
+            double [][] graphResults = new double [1][1];
             String graphTitle = "";
             String resulType = "";
             String xLine = "";
             String yLine = "";
+            int graphType = -1;
             while (graph == -1){
 	            System.out.println("Qual dos gráficos deseja gerar: ");
 	            System.out.println(" 1-Número total de individuos");
@@ -96,43 +97,57 @@ public class Project {
 	
 	            switch(graph) {
 	            case 1:
-	            	graphResults = new double[gen+1];
+	            	graphResults = new double[1][gen+1];
 	            	for(int i = 0; i < gen+1; i++) {
-	            		graphResults[i] = totalPopulationChange[i];
+	            		graphResults[0][i] = totalPopulationChange[i];
 	            	}
 	            	graphTitle = "Número Total De Individuos";
 	                resulType = "Número Total De Individuos";
 	                xLine = "Momento";
 	                yLine = "Dimensão da população";
+	                graphType = 1;
 	            	break;
 	            case 2:
+	            	graphResults = new double[1][gen];
 	            	for(int i = 0; i < gen; i++) {
-	            		graphResults[i] = rateOfChange[i];
+	            		graphResults[0][i] = rateOfChange[i];
 	            	}
 	            	graphTitle = "Crescimento da população";
 	                resulType = "Crescimento da população";
 	                xLine = "Momento";
 	                yLine = "Variação";
+	                graphType = 2;
 	            	break;
 	            case 3:
-	            	graphResults = new double[gen+1];
+	            	graphResults = new double[gen+1][dim];
 	            	for(int i = 0; i < gen+1; i++) {
-	            		graphResults[i] = numberOfClasses[0][i];
+	            		for(int j = 0; j < dim; j++) {
+	            			graphResults[i][j] = numberOfClasses[i][j];
+	            		}
 	            	}
 	            	graphTitle = "Número por Classe (não normalizado)";
 	                resulType = "Número por Classe";
 	                xLine = "Momento";
 	                yLine = "Classe";
+	                graphType = 3;
 	            	break;
 	            case 4:
-	            	graphResults = new double[gen+1];
+	            	graphResults = new double[gen+1][dim];
 	            	for(int i = 0; i < gen+1; i++) {
-	            		graphResults[i] = numberOfClasses[0][i];
+	            		double total = totalPopulationChange[i];
+	            		for(int j = 0; j < dim; j++) {
+	            			if(total == 0) {
+	            				graphResults[i][j] = 0; 
+	            			} else {
+	            				graphResults[i][j] = 100*numberOfClasses[i][j]/total;
+	            			}
+	            		}
 	            	}
 	            	graphTitle = "Número por Classe (normalizado)";
 	                resulType = "Número por Classe";
 	                xLine = "Momento";
 	                yLine = "Classe";
+	                graphType = 4;
 	            	break;
 	            default:
 	            	System.out.println("Escolha inválida.");
@@ -915,10 +930,15 @@ public class Project {
         return result;
     }
     
-    public static void createGraph(double[] matrix, int outputType, String graphTitle,
+    public static void createGraph(double[][] matrix, int outputType, String graphTitle,
     		String resultType, String xLine, String yLine, String outputFileName) throws IOException {
+    	int multipleLines = 0;
+    	
+    	if(matrix.length > 1) {
+    		multipleLines = matrix[0].length;
+    	}
     	creatingDataFile(matrix);
-    	gnuplotGraph(outputType, graphTitle, resultType, xLine, yLine, outputFileName);
+    	gnuplotGraph(outputType, graphTitle, resultType, xLine, yLine, outputFileName, multipleLines);
     	startingGnuplot();
     }
     
@@ -931,7 +951,7 @@ public class Project {
      * @throws IOException 
      */
     public static void gnuplotGraph(int outputType, String graphTitle, String dataDescription, 
-    		String xLine, String yLine, String outputFileName) throws IOException {
+    		String xLine, String yLine, String outputFileName, int multipleLines) throws IOException {
     	FileWriter plot = new FileWriter(plotNameFile);
     	String terminalOutput = "";
     	
@@ -959,7 +979,14 @@ public class Project {
     	plot.write(String.format("set xlabel \"%s\"\n", xLine));
     	plot.write(String.format("set ylabel \"%s\"\n", yLine));
     	plot.write(String.format("set style data linespoints\n"));
-    	plot.write(String.format("plot \"%s\" title \"%s\"\n", dataNameFile, dataDescription));
+    	if(multipleLines > 0) {
+    		plot.write(String.format("plot"));
+    		for(int i = 0; i < multipleLines; i++) {
+    			plot.write(String.format(" \"%s\" using 1:%d with lines title \"x%d\", ", dataNameFile, i+2, i+1));
+    		}
+    	} else {
+    		plot.write(String.format("plot \"%s\" title \"%s\"\n", dataNameFile, dataDescription));
+    	}
     	plot.close();
     }
     
@@ -969,10 +996,21 @@ public class Project {
     	Process prcs = rt.exec(result);
     }
     
-    public static void creatingDataFile(double[] matrix) throws IOException {
+    public static void creatingDataFile(double[][] matrix) throws IOException {
     	FileWriter data = new FileWriter(dataNameFile);
-    	for(int i = 0; i < matrix.length; i++) {
-    		data.write(String.format(Locale.US, "%d %.2f\n", i, matrix[i]));
+    	
+    	if(matrix.length == 1) {
+    		for(int i = 0; i < matrix[0].length; i++) {
+        		data.write(String.format(Locale.US, "%d %.2f\n", i, matrix[0][i]));
+        	}
+    	} else {
+	    	for(int i = 0; i < matrix.length; i++) {
+		    	data.write(String.format("%d", i));
+		    	for(int j = 0; j < matrix[i].length; j++) {
+		    		data.write(String.format(Locale.US, ", %.2f", matrix[i][j]));
+		    	}
+		    	data.write("\n");
+	    	}
     	}
     	data.close();
     }
