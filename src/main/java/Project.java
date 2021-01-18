@@ -1,5 +1,6 @@
 import org.la4j.Matrix;
 import org.la4j.decomposition.EigenDecompositor;
+import org.la4j.matrix.dense.Basic1DMatrix;
 import org.la4j.matrix.dense.Basic2DMatrix;
 
 import java.io.File;
@@ -391,57 +392,73 @@ public class Project {
      */
 
     public static double[][] getPopulationfromFile(String filename,int dim) throws FileNotFoundException {
-        Scanner scanner = new Scanner(new File(filename));
-        String line = scanner.nextLine();
-        //Verificar se é linha de dimensão de população if(line=='%x%')
-        String[] quantity_population = line.split(",");
-        int len_quantity_population = quantity_population.length;
-        int i=0;
+        String[] vec = initial_vec(filename);
 
-        for (i = 0; i < len_quantity_population; i++) {
-            quantity_population[i] = quantity_population[i].trim();
-            quantity_population[i] = quantity_population[i].substring(4);
+        String[] quantity_population = new String[dim];
+
+        Scanner scanner = new Scanner(new File(filename));
+        String line = "";
+
+        for (int k = 0; k < vec.length; k++) {
+            if (vec[k].equals("x")) {
+                line = scanner.nextLine();
+                quantity_population = line.split(",");
+
+                for (int i = 0; i < quantity_population.length; i++) {
+                    quantity_population[i] = quantity_population[i].trim();
+                    quantity_population[i] = quantity_population[i].substring(4);
+                }
+            }
         }
 
-        double [][] matrixpop = new double[len_quantity_population][1];
+        double [][] matrixpop = new double[quantity_population.length][1];
 
-        for(i =0;i<len_quantity_population;i++){
+        for(int i =0; i<quantity_population.length; i++){
         	matrixpop[i][0] = Double.parseDouble(quantity_population[i]);
         }
-        return matrixpop;
 
+        return matrixpop;
     }
 
     public static double[][] MatrixWriteFile(String filename, int dim) throws FileNotFoundException {
+        String[] vec = initial_vec(filename);
+
+        String[] survival = new String[dim];
+        String[] fecundity = new String[dim];
+        String[] quantity_population = new String[dim];
+
         Scanner scanner = new Scanner(new File(filename));
-        String line = scanner.nextLine();
-        String[] quantity_population = line.split(",");
-        int len_quantity_population = quantity_population.length;
+        String line = "";
 
-        for (int i = 0; i < len_quantity_population; i++) {
-            quantity_population[i] = quantity_population[i].trim();
-            quantity_population[i] = quantity_population[i].substring(4);
+        for (int k = 0; k < vec.length; k++) {
+            if (vec[k].equals("x")) {
+                line = scanner.nextLine();
+                quantity_population = line.split(",");
+
+                for (int i = 0; i < quantity_population.length; i++) {
+                    quantity_population[i] = quantity_population[i].trim();
+                    quantity_population[i] = quantity_population[i].substring(4);
+                }
+            } else if (vec[k].equals("s")) {
+                line = scanner.nextLine();
+                survival = line.split(",");
+
+                for (int i = 0; i < survival.length; i++) {
+                    survival[i] = survival[i].trim();
+                    survival[i] = survival[i].substring(3);
+                }
+            } else if (vec[k].equals("f")) {
+                line = scanner.nextLine();
+                fecundity = line.split(",");
+
+                for (int i = 0; i < fecundity.length; i++) {
+                    fecundity[i] = fecundity[i].trim();
+                    fecundity[i] = fecundity[i].substring(3);
+                }
+            }
         }
 
-        line = scanner.nextLine();
-        String[] survival = line.split(",");
-        int len_survival = survival.length;
-
-        for (int i = 0; i < len_survival; i++) {
-            survival[i] = survival[i].trim();
-            survival[i] = survival[i].substring(3);
-        }
-
-        line = scanner.nextLine();
-        String[] fecundity = line.split(",");
-        int len_fecundity = fecundity.length;
-
-        for (int i = 0; i < len_fecundity; i++) {
-            fecundity[i] = fecundity[i].trim();
-            fecundity[i] = fecundity[i].substring(3);
-        }
-
-        double[][] matrixleslie = new double[len_fecundity][len_fecundity];
+        double[][] matrixleslie = new double[fecundity.length][fecundity.length];
 
         //Sobrevivência:
         for (int i = 0; i < dim - 1; i++) {
@@ -566,22 +583,17 @@ public class Project {
         String[] vec = new String[3];
 
         String line = scanner.nextLine();
-
         String[] firstLine = line.split("0");
 
         line = scanner.nextLine();
         String[] secondLine = line.split("0");
 
         line = scanner.nextLine();
-        String [] thirdLine = line.split("0");
+        String[] thirdLine = line.split("0");
 
         vec[0] = firstLine[0];
         vec[1] = secondLine[0];
         vec[2] = thirdLine[0];
-
-        for (int i = 0; i < vec.length; i++) {
-            System.out.println(vec[i]);
-        }
 
         return vec;
     }
@@ -650,7 +662,6 @@ public class Project {
         return eigen_vec;
     }
 
-
     /***
      * Calcular dimensão de População em Determinado momento
      * Parametros : População inicial, taxa de sobrevivencia, taxa de fecundidade e valor de tempo ou
@@ -658,16 +669,16 @@ public class Project {
      *
      * Output: Valor da dimensão da população em t
      */
-    public static Matrix dimPopulationinT(double[][] leslie,double[][] population, int t ){
+    public static Matrix dimPopulationinT(double[][] leslie, double[][] population, int t ){
 
         //Criação da Matrix em T
-        double [][] populationinT = new double[population.length][1];
+        double [][] populationinT = new double[1][population.length];
         Matrix populationinTMatrix = convertToMatrix(populationinT);
     	
         //Conversao em Matrizes para facilitar calculos
         Matrix lesliematrix = convertToMatrix(leslie);
         Matrix populationInicial = convertToMatrix(population);
-    	
+
         populationinTMatrix  = (lesliematrix.power(t)).multiply(populationInicial);
         return populationinTMatrix;
     }
