@@ -59,7 +59,7 @@ public class Project {
             
             double[] totalPopulationChange = new double[gen+1];
             for(int i = 0; i <= gen; i++) {
-	            Matrix populationResult = dimPopulationinT(leslie, population, i);
+	            Matrix populationResult = dimPopulationinT(leslie, population, i); //Possivelmente teremos de alterar em dimPopulationinT inicialização de populationinT
 	            totalPopulationChange[i] = totaldimPopulation(populationResult);
 	            System.out.println("Dimensão da população em t = " + i);
 	            System.out.println(populationResult);
@@ -188,17 +188,163 @@ public class Project {
         //Modo interativo com ficheiro: java -jar nome_programa.jar -n nome_ficheiro_entrada.txt
         if (args.length == 2) {
             do {
-                System.out.println("Número de grupos etários (dimensão): ");
+                System.out.println("Número de grupos etários (dimensão): "); //grupos etários
                 dim = getdimfromLeslieMatrixFile(args[1]);
                 System.out.println(dim); //Imprime mas não pede
-                System.out.println("Número de gerações a calcular: ");
+                System.out.println("Número de gerações a calcular: "); //gerações
                 gen = in.nextInt();
             } while (dim < 0 && gen < 0);
 
             //Criar Matriz Leslie com ficheiro
             System.out.println("Matriz de Leslie com ficheiro: ");
-            System.out.println(LeslieMatrixFile(args[1], dim));            
+            Matrix matrix_leslie = LeslieMatrixFile(args[1], dim);
+            System.out.println(matrix_leslie);
+            double[][] leslie = convertToDouble(matrix_leslie);
+
+
+            //Mostrar Resultados obtidos
+            double eigenvalue = eigen_value(leslie);
+            System.out.println("Valor Próprio: ");
+            System.out.println(eigenvalue);
+
+            double [] eigenvector = eigen_vec(leslie);
+            System.out.println("Vetor Próprio: ");
+            System.out.println(Arrays.toString(eigenvector));
+
+            System.out.println("Valores da população Inicial: ");
+            double[][] population = getPopulationfromFile(args[1],dim);
+            for(int i = 0; i < dim; i++) {
+                System.out.println(population[i][0]);
+            }
+
+            double[] totalPopulationChange = new double[gen+1];
+            for(int i = 0; i <= gen; i++) {
+                Matrix populationResult = dimPopulationinT(leslie, population, i);
+                totalPopulationChange[i] = totaldimPopulation(populationResult);
+                System.out.println("Dimensão da população em t = " + i);
+                System.out.println(populationResult);
+                System.out.println("Total da população em t = " + i);
+                System.out.println(totalPopulationChange[i]);
+            }
+
+            double [] rateOfChange = new double [gen];
+            rateOfChange = rateofchange(leslie, population, gen);
+            System.out.println("Taxa de variação ao longo dos anos: ");
+            for(int i = 0; i < gen; i++) {
+                System.out.println(rateOfChange[i]);
+            }
+
+            System.out.println("Valor de classes: ");
+            double [][] numberOfClasses = new double[gen+1][dim];
+            for(int i = 0; i <= gen; i++) {
+                numberOfClasses [i] = dimPopulationinT(leslie, population, i).getColumn(0).toDenseVector().toArray();
+                System.out.println(Arrays.toString(numberOfClasses[i]));
+            }
+
+            double [] graphResults = new double[gen];
+            String graphTitle = "";
+            String resulType = "";
+            String xLine = "";
+            String yLine = "";
+            while (graph == -1){
+                System.out.println("Qual dos gráficos deseja gerar: ");
+                System.out.println(" 1-Número total de individuos");
+                System.out.println(" 2-Crescimento da população");
+                System.out.println(" 3-Numero por classe (não normalizado)");
+                System.out.println(" 4-Numero por classe (normalizado)");
+                graph = in.nextInt();
+
+                switch(graph) {
+                    case 1:
+                        graphResults = new double[gen+1];
+                        for(int i = 0; i < gen+1; i++) {
+                            graphResults[i] = totalPopulationChange[i];
+                        }
+                        graphTitle = "Número Total De Individuos";
+                        resulType = "Número Total De Individuos";
+                        xLine = "Momento";
+                        yLine = "Dimensão da população";
+                        break;
+                    case 2:
+                        for(int i = 0; i < gen; i++) {
+                            graphResults[i] = rateOfChange[i];
+                        }
+                        graphTitle = "Crescimento da população";
+                        resulType = "Crescimento da população";
+                        xLine = "Momento";
+                        yLine = "Variação";
+                        break;
+                    case 3:
+                        graphResults = new double[gen+1];
+                        for(int i = 0; i < gen+1; i++) {
+                            graphResults[i] = numberOfClasses[0][i];
+                        }
+                        graphTitle = "Número por Classe (não normalizado)";
+                        resulType = "Número por Classe";
+                        xLine = "Momento";
+                        yLine = "Classe";
+                        break;
+                    case 4:
+                        graphResults = new double[gen+1];
+                        for(int i = 0; i < gen+1; i++) {
+                            graphResults[i] = numberOfClasses[0][i];
+                        }
+                        graphTitle = "Número por Classe (normalizado)";
+                        resulType = "Número por Classe";
+                        xLine = "Momento";
+                        yLine = "Classe";
+                        break;
+                    default:
+                        System.out.println("Escolha inválida.");
+                        graph = -1;
+                        break;
+                }
+            }
+            createGraph(graphResults, 0, graphTitle, resulType, xLine, yLine, "");
+
+            while (save == -1){
+                System.out.println("Guardar como: ");
+                System.out.println(" 1-png");
+                System.out.println(" 2-txt");
+                System.out.println(" 3-eps");
+                System.out.println(" 0-Sair sem guardar");
+                save = in.nextInt();
+
+                if(save < 0 || save > 3) {
+                    System.out.println("Escolha inválida.");
+                    save = -1;
+                }
+            }
+            if(save != 0) {
+                System.out.println("Nome do ficheiro: ");
+                if(in.hasNextLine()) {
+                    in.nextLine();
+                }
+                fileName = in.nextLine();
+
+                String defaultExtension = "";
+                switch (save) {
+                    case 1:
+                        defaultExtension = ".png";
+                        break;
+                    case 2:
+                        defaultExtension = ".txt";
+                        break;
+                    case 3:
+                        defaultExtension = ".eps";
+                        break;
+                }
+                if(!fileName.toLowerCase().endsWith(defaultExtension)) {
+                    fileName = fileName + defaultExtension;
+                }
+                createGraph(graphResults, save, graphTitle, resulType, xLine, yLine, fileName);
+            }
+            creatingTxtFileGraph(leslie, gen, totalPopulationChange, rateOfChange, numberOfClasses, eigenvalue, eigenvector);
+
+
         }
+
+
 
         //Modo não interativo com ficheiro: java -jar nome_programa.jar -t XXX -g Y -e -v -r nome_ficheiro_entrada.txt nome_ficheiro_saida.txt
         if (args.length > 2) {
@@ -351,6 +497,24 @@ public class Project {
             }
         }
     }
+
+    public static double [][] convertToDouble(Matrix matrix){
+        int dim = matrix.columns();
+        double[][] doubles=new double[dim][dim];
+
+        for(int i =0; i<dim;i++){
+            for(int j=0;j<dim;j++){
+                doubles[i][j] = matrix.get(i,j);
+            }
+        }
+
+        return doubles;
+
+    }
+
+
+
+
 
     public static double[][] LeslieMatrix (int dim) {
         Scanner in = new Scanner(System.in);
