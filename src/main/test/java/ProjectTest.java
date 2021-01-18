@@ -1,4 +1,4 @@
-package src;
+package java;
 
 import org.junit.jupiter.api.Test;
 
@@ -7,27 +7,32 @@ class ProjectTest {
 
     @Test
     void leslieMatrix() {
+        double[][] matrix_leslie = {{0, 3.5, 1.5, 0.39},
+                {0.4, 0, 0, 0},
+                {0, 0.6, 0, 0},
+                {0, 0, 0.5, 0}};
+
 
     }
 
     @Test
-    void convertToMatrix() {
+    public void convertToMatrix() {
     }
 
     @Test
-    void getPopulationfromFile() {
+    public void getPopulationfromFile() {
     }
 
     @Test
-    void matrixWriteFile() {
+    public void matrixWriteFile() {
     }
 
     @Test
-    void leslieMatrixFile() {
+    public void leslieMatrixFile() {
     }
 
     @Test
-    void eigen_value() {
+    public void eigen_value() {
      /*   double[][] matrix_leslie = {{0, 3.5, 1.5, 0.39},
                                     {0.4, 0, 0, 0},
                                     {0, 0.6, 0, 0},
@@ -43,38 +48,38 @@ class ProjectTest {
     }
 
     @Test
-    void dimPopulationinT() {
+    public void dimPopulationinT() {
     }
 
     @Test
-    void totaldimPopulation() {
+    public void totaldimPopulation() {
     }
 
     @Test
-    void distriPopulation() {
+    public void distriPopulation() {
     }
 
     @Test
-    void rateofchange() {
+    public void rateofchange() {
     }
 
     @Test
-    void createGraph() {
+    public void createGraph() {
     }
 
     @Test
-    void gnuplotGraph() {
+    public void gnuplotGraph() {
     }
 
     @Test
-    void startingGnuplot() {
+    public void startingGnuplot() {
     }
 
     @Test
-    void creatingDataFile() {
+    public void creatingDataFile() {
     }
 
     @Test
-    void creatingTxtFileGraph() {
+    public void creatingTxtFileGraph() {
     }
 }

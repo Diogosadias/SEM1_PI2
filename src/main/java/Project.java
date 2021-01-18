@@ -7,11 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
 
 public class Project {
 	
@@ -889,7 +885,7 @@ public class Project {
     public List<String> distriPopulation(double[][] leslie, double[][] population, int t){
 
         //Criação da Matrix em T
-        double [][] populationinT = new double[population.length][1];
+        double [][] populationinT = new double[1][population.length];
         Matrix populationDistribution = convertToMatrix(populationinT);
 
         //Conversao em Matrizes para facilitar calculos
