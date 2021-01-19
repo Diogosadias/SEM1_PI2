@@ -1,38 +1,40 @@
 package java;
 
-import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.Test;
 
 
 class ProjectTest {
 
-    @Test
-    void leslieMatrix() {
-        double[][] matrix_leslie = {{0, 3.5, 1.5, 0.39},
+
+     public static boolean test_leslieMatrix() {
+       /* double[][] matrix_leslie = {{0, 3.5, 1.5, 0.39},
                 {0.4, 0, 0, 0},
                 {0, 0.6, 0, 0},
                 {0, 0, 0.5, 0}};
-
+        */
 
     }
 
-    @Test
-    public void convertToMatrix() {
+
+    public static boolean test_convertToMatrix() {
+
     }
 
-    @Test
-    public void getPopulationfromFile() {
+
+    public static boolean test_getPopulationfromFile() {
+
     }
 
-    @Test
-    public void matrixWriteFile() {
+
+    public static boolean test_matrixWriteFile() {
     }
 
-    @Test
-    public void leslieMatrixFile() {
+
+    public static boolean test_leslieMatrixFile() {
     }
 
-    @Test
-    public void eigen_value() {
+
+    public static boolean test_eigen_value() {
      /*   double[][] matrix_leslie = {{0, 3.5, 1.5, 0.39},
                                     {0.4, 0, 0, 0},
                                     {0, 0.6, 0, 0},
@@ -47,39 +49,39 @@ class ProjectTest {
 
     }
 
-    @Test
-    public void dimPopulationinT() {
+
+    public static boolean test_dimPopulationinT() {
     }
 
-    @Test
-    public void totaldimPopulation() {
+
+    public static boolean test_totaldimPopulation() {
     }
 
-    @Test
-    public void distriPopulation() {
+
+    public static boolean test_distriPopulation() {
     }
 
-    @Test
-    public void rateofchange() {
+
+    public static boolean test_rateofchange() {
     }
 
-    @Test
-    public void createGraph() {
+
+    public static boolean test_createGraph() {
     }
 
-    @Test
-    public void gnuplotGraph() {
+
+    public static boolean test_gnuplotGraph() {
     }
 
-    @Test
-    public void startingGnuplot() {
+
+    public static boolean test_startingGnuplot() {
     }
 
-    @Test
-    public void creatingDataFile() {
+
+    public static boolean test_creatingDataFile() {
     }
 
-    @Test
-    public void creatingTxtFileGraph() {
+
+    public static boolean test_creatingTxtFileGraph() {
     }
 }
