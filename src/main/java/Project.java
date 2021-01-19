@@ -193,25 +193,20 @@ public class Project {
             creatingTxtFileGraph(leslie, gen, totalPopulationChange, rateOfChange, numberOfClasses, eigenvalue, eigenvector);
         }
 
-        //FALTA UM MÉTODO PARA VER A DIMENSÃO DE CADA LINHA NO FICHEIRO PQ NÃO É SUPOSTO PERGUNTAR QUANDO ARGS.LENGTH == 2 E > 2
-        // -> SUBSTITUIR NO MÉTODO INTERATIVO E NÃO INTERATIVO COM FICHEIRO
-
         //Modo interativo com ficheiro: java -jar nome_programa.jar -n nome_ficheiro_entrada.txt
         if (args.length == 2) {
             do {
-                System.out.println("Número de grupos etários (dimensão): "); //grupos etários
+                System.out.println("Número de grupos etários: "); //grupos etários - dimensão
                 dim = getdimfromLeslieMatrixFile(args[1]);
                 System.out.println(dim); //Imprime mas não pede
-                System.out.println("Número de gerações a calcular: "); //gerações
+                System.out.println("\nNúmero de gerações a calcular: "); //gerações
                 gen = in.nextInt();
             } while (dim < 0 && gen < 0);
 
             //Criar Matriz Leslie com ficheiro
-            System.out.println("Matriz de Leslie com ficheiro: ");
             Matrix matrix_leslie = LeslieMatrixFile(args[1], dim);
             System.out.println(matrix_leslie);
             double[][] leslie = convertToDouble(matrix_leslie);
-
 
             //Mostrar Resultados obtidos
             double eigenvalue = eigen_value(leslie);
@@ -219,10 +214,10 @@ public class Project {
             System.out.println(eigenvalue);
 
             double [] eigenvector = eigen_vec(leslie);
-            System.out.println("Vetor Próprio: ");
+            System.out.println("\nVetor Próprio: ");
             System.out.println(Arrays.toString(eigenvector));
 
-            System.out.println("Valores da população Inicial: ");
+            System.out.println("\nValores da população Inicial: ");
             double[][] population = getPopulationfromFile(args[1],dim);
             for(int i = 0; i < dim; i++) {
                 System.out.println(population[i][0]);
@@ -232,20 +227,20 @@ public class Project {
             for(int i = 0; i <= gen; i++) {
                 Matrix populationResult = dimPopulationinT(leslie, population, i);
                 totalPopulationChange[i] = totaldimPopulation(populationResult);
-                System.out.println("Dimensão da população em t = " + i);
+                System.out.println("\nDimensão da população em t = " + i);
                 System.out.println(populationResult);
-                System.out.println("Total da população em t = " + i);
+                System.out.println("\nTotal da população em t = " + i);
                 System.out.println(totalPopulationChange[i]);
             }
 
             double [] rateOfChange = new double [gen];
             rateOfChange = rateofchange(leslie, population, gen);
-            System.out.println("Taxa de variação ao longo dos anos: ");
+            System.out.println("\nTaxa de variação ao longo dos anos: ");
             for(int i = 0; i < gen; i++) {
                 System.out.println(rateOfChange[i]);
             }
 
-            System.out.println("Valor de classes: ");
+            System.out.println("\nValor de classes: ");
             double [][] numberOfClasses = new double[gen+1][dim];
             for(int i = 0; i <= gen; i++) {
                 numberOfClasses [i] = dimPopulationinT(leslie, population, i).getColumn(0).toDenseVector().toArray();
@@ -259,7 +254,7 @@ public class Project {
             String yLine = "";
             int graphType = -1;
             while (graph == -1){
-	            System.out.println("Qual dos gráficos deseja gerar: ");
+	            System.out.println("\n\nQual dos gráficos deseja gerar: ");
 	            System.out.println(" 1-Número total de individuos");
 	            System.out.println(" 2-Crescimento da população");
 	            System.out.println(" 3-Numero por classe (não normalizado)");
@@ -396,123 +391,117 @@ public class Project {
                 }
             }
 
-            System.out.println("Matriz de Leslie com ficheiro - modo não interativo: ");
-
             try {
                 File file = new File(args[args.length - 1]);
                 FileWriter writer = new FileWriter(args[args.length - 1]);
-                if (file.createNewFile()) {
-                    System.out.println("Ficheiro criado: " + file.getName());
-                    writer.write("Gerações: " + generations + "\n");
-                    writer.write("\n");
-                    writer.write("Formato ficheiro gnuplot: " + format_gnuplot_files + "\n");
-                    writer.write("\n");
 
-                    if (vec[0] == 1) {
-                        writer.write("Valor Próprio: " + eigen_value(MatrixWriteFile(args[args.length - 2], dim)) + "\n");
-                        writer.write("\n");
+                System.out.println("Ficheiro criado: " + file.getName());
+                writer.write("Gerações: \n" + generations + "\n");
+                writer.write("Formato ficheiro gnuplot: \n" + format_gnuplot_files + "\n");
 
-                    }
-                    if (vec[1] == 1) {
-
-                        /*
-                        * Refazer para ficar igual a ficheiro de saida
-                        * */
-                        writer.write("Dimensão da População: " + "\n");
-                        //Escrever cabeçalho gerações
-                        int i=-1;
-                        writer.write("( " );
-                        for(i =0;i<dim-1;i++){
-                            writer.write(i +", " );
-                        }
-                        writer.write(""+ i +")" + "\n" );
-                        double temp = -1.0;
-
-                        //Começar a escrever linha da dimensão
-                        writer.write("( " );
-                        for(i=0;i<dim-1;i++){
-                            temp = totaldimPopulation(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
-                            writer.write(temp +", " );
-                        }
-                        temp = totaldimPopulation(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
-                        writer.write(temp +") " + "\n" );
-                    }
-                    if (vec[2] == 1) {
-
-                        /*
-                         * Refazer para ficar igual a ficheiro de saida
-                         * */
-                        writer.write("Variação da População: " + "\n");
-                        //Escrever cabeçalho gerações
-                        int i=-1;
-                        writer.write("( " );
-                        for(i =1;i<dim;i++){
-                            writer.write(i +", " );
-                        }
-                        writer.write(""+ i +")" + "\n" );
-
-                        //Função vai receber array de double
-                        //Começar a escrever linha da dimensão
-
-                        double [] temp = new double [dim];
-                        temp=rateofchange((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),dim);
-                        writer.write("( " );
-                        for(i=0;i<dim-2;i++){
-                            writer.write(temp[i] + ", ");
-                        }
-                        writer.write(temp[i] +") " + "\n" );
-                    }
-                    writer.close();
-                } else {
-                    System.out.println("Ficheiro já existente. Será atualizado.");
-                    writer.write("Gerações: " + generations + "\n");
-                    writer.write("Formato ficheiro gnuplot: " + format_gnuplot_files + "\n");
-                    if (vec[0] == 1) {
-                        writer.write("Valor Próprio: " + eigen_value(MatrixWriteFile(args[args.length - 2], dim)) + "\n");
-                    }
-                    if (vec[1] == 1) {
-                        writer.write("Dimensão da População: " + "\n");
-                        //Escrever cabeçalho gerações
-                        int i=-1;
-                        writer.write("( " );
-                        for(i =0;i<dim-1;i++){
-                            writer.write(i +", " );
-                            }
-                        writer.write(""+ i +")" + "\n" );
-                        double temp = -1.0;
-
-                        //Começar a escrever linha da dimensão
-                        writer.write("( " );
-                        for(i=0;i<dim-1;i++){
-                            temp = totaldimPopulation(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
-                            writer.write(temp +", " );
-                        }
-                        temp = totaldimPopulation(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
-                        writer.write(temp +") " + "\n" );
-                    }
-                    if (vec[2] == 1) {
-                        writer.write("Variação da População: " + "\n");
-                        //Escrever cabeçalho gerações
-                        int i=-1;
-                        writer.write("( " );
-                        for(i =1;i<dim;i++){
-                            writer.write(i +", " );
-                        }
-                        writer.write(""+ i +")" + "\n" );
-
-                        //Função vai receber array de double
-                        //Começar a escrever linha da dimensão
-
-                        double [] temp = new double [dim];
-                        temp=rateofchange((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),dim);
-                        writer.write("( " );
-                        for(i=0;i<dim-2;i++){
-                            writer.write(temp[i] + ", ");
-                        }
-                        writer.write(temp[i] +") " + "\n" );
-                    }
-                    writer.close();
+                if (vec[0] == 1) {
+                    writer.write("Valor Próprio: \n" + eigen_value(MatrixWriteFile(args[args.length - 2], dim)) + "\n");
+                    writer.write("Vetor Próprio: \n" + Arrays.toString(eigen_vec(MatrixWriteFile(args[args.length - 2], dim))) + "\n");
                 }
+                if (vec[1] == 1) {
+                    /*
+                     * Refazer para ficar igual a ficheiro de saida
+                     * */
+                    writer.write("Dimensão da População: " + "\n");
+                    //Escrever cabeçalho gerações
+                    int i = -1;
+                    writer.write("( " );
+                    for(i = 0; i < dim - 1; i++){
+                        writer.write(i +", " );
+                    }
+                    writer.write(""+ i +")" + "\n" );
+                    double temp = -1.0;
+
+                    //Começar a escrever linha da dimensão
+                    writer.write("( " );
+                    for(i=0;i<dim-1;i++){
+                        temp = totaldimPopulation(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
+                        writer.write(temp +", " );
+                    }
+                    temp = totaldimPopulation(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
+                    writer.write(temp +") " + "\n" );
+                }
+                if (vec[2] == 1) {
+                    writer.write("Variação da População: " + "\n");
+                    //Escrever cabeçalho gerações
+                    int i = -1;
+                    writer.write("( " );
+                    for(i = 1; i < dim; i++){
+                        writer.write(i +", " );
+                    }
+                    writer.write(""+ i +")" + "\n" );
+
+                    //Função vai receber array de double
+                    //Começar a escrever linha da dimensão
+
+                    double [] temp = new double [dim];
+                    temp=rateofchange((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),dim);
+                    writer.write("( " );
+                    for(i=0;i<dim-2;i++){
+                        writer.write(temp[i] + ", ");
+                    }
+                    writer.write(temp[i] +") " + "\n" );
+                }
+                writer.close();
+//                if () {
+//
+//                }
+//                else {
+//                    System.out.println("Ficheiro já existente. Será atualizado.");
+//                    writer.write("Gerações: " + generations + "\n");
+//                    writer.write("Formato ficheiro gnuplot: " + format_gnuplot_files + "\n");
+//                    if (vec[0] == 1) {
+//                        writer.write("Valor Próprio: " + eigen_value(MatrixWriteFile(args[args.length - 2], dim)) + "\n");
+//                        writer.write("Vetor Próprio: " + Arrays.toString(eigen_vec(MatrixWriteFile(args[args.length - 2], dim))) + "\n");
+//                    }
+//                    if (vec[1] == 1) {
+//                        writer.write("Dimensão da População: " + "\n");
+//                        //Escrever cabeçalho gerações
+//                        int i=-1;
+//                        writer.write("(" );
+//                        for(i =0;i<dim-1;i++){
+//                            writer.write(i +", " );
+//                            }
+//                        writer.write(""+ i +")" + "\n" );
+//                        double temp = -1.0;
+//
+//                        //Começar a escrever linha da dimensão
+//                        writer.write("(" );
+//                        for (i = 0; i < dim - 1; i++){
+//                            temp = totaldimPopulation(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
+//                            writer.write(temp +", " );
+//                        }
+//                        temp = totaldimPopulation(dimPopulationinT((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),i));
+//                        writer.write(temp +") " + "\n" );
+//                    }
+//                    if (vec[2] == 1) {
+//                        writer.write("Variação da População: " + "\n");
+//                        //Escrever cabeçalho gerações
+//                        int i=-1;
+//                        writer.write("(" );
+//                        for(i =1;i<dim;i++){
+//                            writer.write(i +", " );
+//                        }
+//                        writer.write(""+ i +")" + "\n" );
+//
+//                        //Função vai receber array de double
+//                        //Começar a escrever linha da dimensão
+//
+//                        double [] temp = new double [dim];
+//                        temp=rateofchange((MatrixWriteFile(args[args.length - 2], dim)),(getPopulationfromFile(args[args.length-2],dim)),dim);
+//                        writer.write("(" );
+//                        for(i=0;i<dim-2;i++){
+//                            writer.write(temp[i] + ", ");
+//                        }
+//                        writer.write(temp[i] +") " + "\n" );
+//                    }
+//                    writer.close();
+//                }
             } catch (IOException e) {
                 System.out.println("Ocorreu um erro ao escrever/criar o ficheiro.");
                 e.printStackTrace();
@@ -531,12 +520,7 @@ public class Project {
         }
 
         return doubles;
-
     }
-
-
-
-
 
     public static double[][] LeslieMatrix (int dim) {
         Scanner in = new Scanner(System.in);
@@ -672,7 +656,7 @@ public class Project {
         for (int k = 0; k < vec.length; k++) {
             if (vec[k].equals("x")) {
                 line = scanner.nextLine();
-                System.out.println("Quantidade de população: ");
+                System.out.println("\nQuantidade de população:");
                 quantity_population = line.split(",");
 
                 for (int i = 0; i < quantity_population.length; i++) {
@@ -683,7 +667,7 @@ public class Project {
                 }
             } else if (vec[k].equals("s")) {
                 line = scanner.nextLine();
-                System.out.println("Sobrevivência: ");
+                System.out.println("\nSobrevivência:");
                 survival = line.split(",");
 
                 for (int i = 0; i < survival.length; i++) {
@@ -693,7 +677,7 @@ public class Project {
                 }
             } else if (vec[k].equals("f")) {
                 line = scanner.nextLine();
-                System.out.println("Fecundidade: "); //Dimensão
+                System.out.println("\nFecundidade:"); //Dimensão
                 fecundity = line.split(",");
 
                 for (int i = 0; i < fecundity.length; i++) {
@@ -717,7 +701,7 @@ public class Project {
 
         Matrix matrix = convertToMatrix(matrixleslie);
 
-        System.out.println("Matriz de Leslie: ");
+        System.out.println("\nMatriz de Leslie:");
         return matrix;
     }
 
@@ -742,23 +726,24 @@ public class Project {
                     quantity_population[i] = quantity_population[i].substring(4);
 
                 }
-            } else if (vec[k].equals("s")) {
-                line = scanner.nextLine();
-                survival = line.split(",");
-
-                for (int i = 0; i < survival.length; i++) {
-                    survival[i] = survival[i].trim();
-                    survival[i] = survival[i].substring(3);
-                }
-            } else if (vec[k].equals("f")) {
-                line = scanner.nextLine();
-                fecundity = line.split(",");
-
-                for (int i = 0; i < fecundity.length; i++) {
-                    fecundity[i] = fecundity[i].trim();
-                    fecundity[i] = fecundity[i].substring(3);
-                }
             }
+//            else if (vec[k].equals("s")) {
+//                line = scanner.nextLine();
+//                survival = line.split(",");
+//
+//                for (int i = 0; i < survival.length; i++) {
+//                    survival[i] = survival[i].trim();
+//                    survival[i] = survival[i].substring(3);
+//                }
+//            } else if (vec[k].equals("f")) {
+//                line = scanner.nextLine();
+//                fecundity = line.split(",");
+//
+//                for (int i = 0; i < fecundity.length; i++) {
+//                    fecundity[i] = fecundity[i].trim();
+//                    fecundity[i] = fecundity[i].substring(3);
+//                }
+//            }
         }
 
         return quantity_population.length;
