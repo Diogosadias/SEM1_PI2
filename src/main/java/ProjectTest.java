@@ -1,5 +1,3 @@
-import org.junit.jupiter.api.Test;
-
 class ProjectTest {
 
     static double[][] matrix_leslie = {{0, 3.5, 1.5, 0.39},
@@ -9,37 +7,37 @@ class ProjectTest {
 
     public double expectedMaxEigenValue = 0.0;
 
-    @Test
+
     boolean leslieMatrix() {
         double[][] matrix_leslie;
 
         return true;
     }
 
-    @Test
-     boolean test_convertToMatrix() {
+
+    public static boolean test_convertToMatrix() {
         return true;
 
     }
 
-    @Test
-     boolean test_getPopulationfromFile() {
+
+    public static boolean test_getPopulationfromFile() {
         return true;
 
     }
 
-    @Test
-     boolean test_matrixWriteFile() {
+
+    public static boolean test_matrixWriteFile() {
         return true;
     }
 
-    @Test
-    boolean test_leslieMatrixFile() {
+
+    public static boolean test_leslieMatrixFile() {
         return true;
     }
 
-    @Test
-    boolean test_eigen_value(matrix_leslie, double expectedMaxEigenValue) {
+
+    public static boolean test_eigen_value(matrix_leslie, double expectedMaxEigenValue) {
 
         double maxEigenvalue = Project.eigen_value(matrix_leslie);
         if(expectedMaxEigenValue==maxEigenvalue)
@@ -49,48 +47,48 @@ class ProjectTest {
 
     }
 
-    @Test
-    boolean test_dimPopulationinT() {
+
+    public static boolean test_dimPopulationinT() {
         return true;
     }
 
-    @Test
-     boolean test_totaldimPopulation() {
+
+    public static boolean test_totaldimPopulation() {
         return true;
     }
 
-    @Test
-     boolean test_distriPopulation() {
+
+    public static boolean test_distriPopulation() {
         return true;
     }
 
-    @Test
-     boolean test_rateofchange() {
+
+    public static boolean test_rateofchange() {
         return true;
     }
 
-    @Test
-     boolean test_createGraph() {
+
+    public static boolean test_createGraph() {
         return true;
     }
 
-    @Test
-     boolean test_gnuplotGraph() {
+
+    public static boolean test_gnuplotGraph() {
         return true;
     }
 
-    @Test
-    boolean test_startingGnuplot() {
+
+    public static boolean test_startingGnuplot() {
         return true;
     }
 
-    @Test
-     boolean test_creatingDataFile() {
+
+    public static boolean test_creatingDataFile() {
         return true;
     }
 
-    @Test
-     boolean test_creatingTxtFileGraph() {
+
+    public static boolean test_creatingTxtFileGraph() {
         return true;
     }
 }
