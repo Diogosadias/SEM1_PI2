@@ -37,7 +37,7 @@ class ProjectTest {
     }
 
 
-    public static boolean test_eigen_value(matrix_leslie, double expectedMaxEigenValue) {
+    public static boolean test_eigen_value(double[][]matrix_leslie, double expectedMaxEigenValue) {
 
         double maxEigenvalue = Project.eigen_value(matrix_leslie);
         if(expectedMaxEigenValue==maxEigenvalue)
