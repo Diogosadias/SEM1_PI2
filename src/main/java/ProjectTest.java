@@ -1,12 +1,15 @@
+import org.la4j.Matrix;
+
 class ProjectTest {
 
     static double[][] matrix_leslie = {{0, 3.5, 1.5, 0.39},
             {0.4, 0, 0, 0},
             {0, 0.6, 0, 0},
             {0, 0, 0.5, 0}};
-
+    
     public double expectedMaxEigenValue = 0.0;
 
+    public int dim = 4;
 
     boolean leslieMatrix() {
         double[][] matrix_leslie;

@@ -424,8 +424,19 @@ public class Project {
                 population = getPopulationfromFile(args[args.length-2],dim);
                 Matrix populatin_f = convertToMatrix(population);
                 writer.write(populatin_f + "\n");
-
-
+                
+                switch(format_gnuplot_files) {
+                case 2:
+                	outputFileGraphFormat = ".txt";
+                	break;
+                case 3:
+                	outputFileGraphFormat = ".eps";
+                	break;
+                default:
+                	outputFileGraphFormat = ".png";
+                	break;
+                }
+                
                 if (vec[0] == 1) {
                     writer.write("Valor Próprio: \n" + eigen_value(leslie) + "\n");
                     writer.write("Vetor Próprio: \n" + Arrays.toString(eigen_vec(leslie)) + "\n");
@@ -440,14 +451,25 @@ public class Project {
                         writer.write("Total da população em t = " + i+ "\n");
                         writer.write(totalPopulationChange[i] + "\n");
                     }
+                    
+                    graphResults = new double[1][generations+1];
+                	for(int i = 0; i < generations+1; i++) {
+                		graphResults[0][i] = totalPopulationChange[i];
+                	}
+                    createGraph(graphResults, format_gnuplot_files, "Número Total De Individuos", "Número Total De Individuos", "Momento", "Dimensão da população", "NúmeroTotalDeIndividuos"+outputFileGraphFormat);
                 }
                 if (vec[2] == 1) {
                     rateOfChange = rateofchange(leslie, population, generations);
-
                     writer.write("\nTaxa de variação ao longo dos anos: "+ "\n");
                     for(int i = 0; i < generations; i++) {
                         writer.write(rateOfChange[i] + "\n");
                     }
+                    
+                    graphResults = new double[1][generations];
+                	for(int i = 0; i < generations; i++) {
+                		graphResults[0][i] = rateOfChange[i];
+                	}
+                	createGraph(graphResults, format_gnuplot_files, "Crescimento da população", "Crescimento da população", "Momento", "Variação", "CrescimentoDaPopulação"+outputFileGraphFormat);
                 }
                 writer.close();
             } catch (IOException e) {
@@ -455,39 +477,10 @@ public class Project {
                 e.printStackTrace();
             }
             
-            switch(format_gnuplot_files) {
-            case 2:
-            	outputFileGraphFormat = ".txt";
-            	break;
-            case 3:
-            	outputFileGraphFormat = ".eps";
-            	break;
-            default:
-            	outputFileGraphFormat = ".png";
-            	break;
-            }
-            
-            for(int i = 0; i <= generations; i++) {
-            	Matrix populationResult = dimPopulationinT(leslie, population, i);
-            	totalPopulationChange[i] = totaldimPopulation(populationResult);
-            }
-            rateOfChange = rateofchange(leslie, population, generations);
             for(int i = 0; i <= generations; i++) {
                 numberOfClasses [i] = dimPopulationinT(leslie, population, i).getColumn(0).toDenseVector().toArray();
-            }
-            
-            graphResults = new double[1][generations+1];
-        	for(int i = 0; i < generations+1; i++) {
-        		graphResults[0][i] = totalPopulationChange[i];
-        	}
-            createGraph(graphResults, format_gnuplot_files, "Número Total De Individuos", "Número Total De Individuos", "Momento", "Dimensão da população", "NúmeroTotalDeIndividuos"+outputFileGraphFormat);
-            
-            graphResults = new double[1][generations];
-        	for(int i = 0; i < generations; i++) {
-        		graphResults[0][i] = rateOfChange[i];
-        	}
-        	createGraph(graphResults, format_gnuplot_files, "Crescimento da população", "Crescimento da população", "Momento", "Variação", "CrescimentoDaPopulação"+outputFileGraphFormat);
-        	
+            }    
+       
         	graphResults = new double[generations+1][dim];
         	for(int i = 0; i < generations+1; i++) {
         		for(int j = 0; j < dim; j++) {
