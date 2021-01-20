@@ -26,7 +26,6 @@ public class Project {
         int force = 1;
         String populationName = "";
 
-        
 		//Modo interativo sem ficheiro
 		if (args.length == 0) {
 			while(force == 1) {
@@ -219,7 +218,6 @@ public class Project {
 			}
 		}
 
-        
 		//Modo interativo com ficheiro: java -jar nome_programa.jar -n nome_ficheiro_entrada.txt
 		if (args.length == 2) {
 			while(force == 1) {
@@ -242,7 +240,7 @@ public class Project {
 				if(populationName.toLowerCase().endsWith(".txt")) {
 					populationName = populationName.substring(0, populationName.length()-4);
 				}
-				
+
 				double eigenvalue = eigen_value(leslie);
 				System.out.println("Valor Próprio: ");
 				System.out.println(eigenvalue);
@@ -263,7 +261,7 @@ public class Project {
 					totalPopulationChange[i] = totaldimPopulation(populationResult);
 					System.out.println("\nDimensão da população em t = " + i);
 					System.out.println(populationResult);
-					System.out.println("\nTotal da população em t = " + i);
+					System.out.println("Total da população em t = " + i);
 					System.out.println(totalPopulationChange[i]);
 				}
 
@@ -357,7 +355,7 @@ public class Project {
 					}
 				}
 				createGraph(graphResults, 0, graphTitle, resulType, xLine, yLine, "");
-				
+
 				save = -1;
 				while (save == -1) {
 					System.out.println("Guardar como: ");
@@ -397,7 +395,7 @@ public class Project {
 					createGraph(graphResults, save, graphTitle, resulType, xLine, yLine, populationName + fileName);
 				}
 				creatingTxtFileGraph(leslie, gen, totalPopulationChange, rateOfChange, numberOfClasses, eigenvalue, eigenvector);
-				
+
 				force = -1;
 				while (force == -1) {
 					System.out.println("Deseja sair ou continuar no programa?");
@@ -413,148 +411,152 @@ public class Project {
 			}
 		}
 
-        //Modo não interativo com ficheiro: java -jar nome_programa.jar -t XXX -g Y -e -v -r nome_ficheiro_entrada.txt nome_ficheiro_saida.txt
+//        Modo não interativo com ficheiro: java -jar nome_programa.jar -t XXX -g Y -e -v -r nome_ficheiro_entrada.txt nome_ficheiro_saida.txt
         if (args.length > 2) {
-        	String outputFileGraphFormat = "";
-        	
-            String generations_aux = args[1];
-            int generations = Integer.parseInt(generations_aux); //gerações a calcular
-            String format_gnuplot_files_aux = args[3];
-            int format_gnuplot_files = Integer.parseInt(format_gnuplot_files_aux); //formato do ficheiro a executar
+        	if (order_class(args[args.length - 2])) {
+				String outputFileGraphFormat = "";
 
-            do {
-                System.out.println("Número de grupos etários (dimensão): ");
-                dim = getdimfromLeslieMatrixFile(args[args.length-2]);
-                System.out.println(dim); //Grupos etários
-            } while (dim < 0);
-            
-            double [][] graphResults = new double [1][1];
-        	double[] totalPopulationChange = new double[generations+1];
-        	double [] rateOfChange = new double [generations];
-        	double [][] numberOfClasses = new double[generations+1][dim];
-            double[][] leslie = new double[dim][dim];
-            double[][] population = new double[dim][1];
-            
-            // Verificar quais os calculos a serem pedidos entre( -e,-v e -r)
-            int[] vec = new int[3];
-            for (int i = 0; i < args.length; i++) {
-                if (args[i].equals("-e")) {
-                    vec[0] = 1;
-                }
-                if (args[i].equals("-v")) {
-                    vec[1] = 1;
-                }
-                if (args[i].equals("-r")) {
-                    vec[2] = 1;
-                }
-            }
+				String generations_aux = args[1];
+				int generations = Integer.parseInt(generations_aux); //gerações a calcular
+				String format_gnuplot_files_aux = args[3];
+				int format_gnuplot_files = Integer.parseInt(format_gnuplot_files_aux); //formato do ficheiro a executar
 
-            File f = new File(args[args.length-2]);
-			populationName = f.getName();
-			if(populationName.toLowerCase().endsWith(".txt")) {
-				populationName = populationName.substring(0, populationName.length()-4);
+				do {
+					System.out.println("Número de grupos etários (dimensão): ");
+					dim = getdimfromLeslieMatrixFile(args[args.length-2]);
+					System.out.println(dim); //Grupos etários
+				} while (dim < 0);
+
+				double [][] graphResults = new double [1][1];
+				double[] totalPopulationChange = new double[generations+1];
+				double [] rateOfChange = new double [generations];
+				double [][] numberOfClasses = new double[generations+1][dim];
+				double[][] leslie = new double[dim][dim];
+				double[][] population = new double[dim][1];
+
+				// Verificar quais os calculos a serem pedidos entre( -e,-v e -r)
+				int[] vec = new int[3];
+				for (int i = 0; i < args.length; i++) {
+					if (args[i].equals("-e")) {
+						vec[0] = 1;
+					}
+					if (args[i].equals("-v")) {
+						vec[1] = 1;
+					}
+					if (args[i].equals("-r")) {
+						vec[2] = 1;
+					}
+				}
+
+				File f = new File(args[args.length-2]);
+				populationName = f.getName();
+				if(populationName.toLowerCase().endsWith(".txt")) {
+					populationName = populationName.substring(0, populationName.length()-4);
+				}
+
+				try {
+					File file = new File(args[args.length - 1]);
+					FileWriter writer = new FileWriter(args[args.length - 1]);
+
+					System.out.println("Ficheiro criado: " + file.getName());
+					writer.write("Gerações: \n" + generations + "\n");
+					writer.write("Formato ficheiro gnuplot: \n" + format_gnuplot_files + "\n");
+
+					//Retirar do ficheiro Matrix de Leslie e População
+					leslie = MatrixWriteFile(args[args.length - 2],dim);
+					Matrix leslie_f = convertToMatrix(leslie);
+					writer.write("\nMatriz de Leslie: \n");
+					writer.write(leslie_f + "\n");
+
+					writer.write("Valores da população Inicial: "+ "\n");
+					population = getPopulationfromFile(args[args.length-2],dim);
+					Matrix populatin_f = convertToMatrix(population);
+					writer.write(populatin_f + "\n");
+
+					switch(format_gnuplot_files) {
+						case 2:
+							outputFileGraphFormat = ".txt";
+							break;
+						case 3:
+							outputFileGraphFormat = ".eps";
+							break;
+						default:
+							outputFileGraphFormat = ".png";
+							break;
+					}
+
+					if (vec[0] == 1) {
+						writer.write("Valor Próprio: \n" + eigen_value(leslie) + "\n");
+						writer.write("Vetor Próprio: \n" + Arrays.toString(eigen_vec(leslie)) + "\n");
+
+					}
+					if (vec[1] == 1) {
+						for(int i = 0; i <= generations; i++) {
+							Matrix populationResult = dimPopulationinT(leslie, population, i);
+							totalPopulationChange[i] = totaldimPopulation(populationResult);
+							writer.write("\nDimensão da população em t = " + i + "\n");
+							writer.write(populationResult.toString()+ "\n");
+							writer.write("Total da população em t = " + i+ "\n");
+							writer.write(totalPopulationChange[i] + "\n");
+						}
+
+					graphResults = new double[1][generations+1];
+					for(int i = 0; i < generations+1; i++) {
+						graphResults[0][i] = totalPopulationChange[i];
+					}
+					createGraph(graphResults, format_gnuplot_files, "Número Total De Individuos", "Número Total De Individuos", "Momento", "Dimensão da população", populationName+"NúmeroTotalDeIndividuos"+outputFileGraphFormat);
+					}
+					if (vec[2] == 1) {
+						rateOfChange = rateofchange(leslie, population, generations);
+						writer.write("\nTaxa de variação ao longo dos anos: "+ "\n");
+						for(int i = 0; i < generations; i++) {
+							writer.write(rateOfChange[i] + "\n");
+						}
+
+					graphResults = new double[1][generations];
+					for(int i = 0; i < generations; i++) {
+						graphResults[0][i] = rateOfChange[i];
+					}
+					createGraph(graphResults, format_gnuplot_files, "Crescimento da população", "Crescimento da população", "Momento", "Variação", populationName+"CrescimentoDaPopulação"+outputFileGraphFormat);
+					}
+					writer.close();
+				} catch (IOException e) {
+					System.out.println("Ocorreu um erro ao escrever/criar o ficheiro.");
+					e.printStackTrace();
+				}
+
+				for(int i = 0; i <= generations; i++) {
+					numberOfClasses [i] = dimPopulationinT(leslie, population, i).getColumn(0).toDenseVector().toArray();
+				}
+
+				graphResults = new double[generations+1][dim];
+				for(int i = 0; i < generations+1; i++) {
+					for(int j = 0; j < dim; j++) {
+						graphResults[i][j] = numberOfClasses[i][j];
+					}
+				}
+				createGraph(graphResults, format_gnuplot_files, "Número por Classe (não normalizado)", "Número por Classe", "Momento", "Classe", populationName+"NúmeroporClasse(NãoNormalizado)"+outputFileGraphFormat);
+
+				graphResults = new double[generations+1][dim];
+				for(int i = 0; i < generations+1; i++) {
+					double total = totalPopulationChange[i];
+					for(int j = 0; j < dim; j++) {
+						if(total == 0) {
+							graphResults[i][j] = 0;
+						} else {
+							graphResults[i][j] = 100*numberOfClasses[i][j]/total;
+						}
+					}
+				}
+				createGraph(graphResults, format_gnuplot_files, "Número por Classe (normalizado)", "Número por Classe", "Momento", "Classe", populationName+"NúmeroporClasse(Normalizado)"+outputFileGraphFormat);
+
+				double valor = eigen_value(leslie);
+				double [] vetor = eigen_vec(leslie);
+				creatingTxtFileGraph(leslie, generations, totalPopulationChange, rateOfChange, numberOfClasses, valor, vetor);
 			}
-			
-            try {
-                File file = new File(args[args.length - 1]);
-                FileWriter writer = new FileWriter(args[args.length - 1]);
-
-                System.out.println("Ficheiro criado: " + file.getName());
-                writer.write("Gerações: \n" + generations + "\n");
-                writer.write("Formato ficheiro gnuplot: \n" + format_gnuplot_files + "\n");
-
-
-                //Retirar do ficheiro Matrix de Leslie e População
-                leslie = MatrixWriteFile(args[args.length - 2],dim);
-                Matrix leslie_f = convertToMatrix(leslie);
-                writer.write("\nMatriz de Leslie: \n");
-                writer.write(leslie_f + "\n");
-
-                writer.write("Valores da população Inicial: "+ "\n");
-                population = getPopulationfromFile(args[args.length-2],dim);
-                Matrix populatin_f = convertToMatrix(population);
-                writer.write(populatin_f + "\n");
-                
-                switch(format_gnuplot_files) {
-                case 2:
-                	outputFileGraphFormat = ".txt";
-                	break;
-                case 3:
-                	outputFileGraphFormat = ".eps";
-                	break;
-                default:
-                	outputFileGraphFormat = ".png";
-                	break;
-                }
-                
-                if (vec[0] == 1) {
-                    writer.write("Valor Próprio: \n" + eigen_value(leslie) + "\n");
-                    writer.write("Vetor Próprio: \n" + Arrays.toString(eigen_vec(leslie)) + "\n");
-
-                }
-                if (vec[1] == 1) {                    
-                    for(int i = 0; i <= generations; i++) {
-                        Matrix populationResult = dimPopulationinT(leslie, population, i);
-                        totalPopulationChange[i] = totaldimPopulation(populationResult);
-                        writer.write("\nDimensão da população em t = " + i + "\n");
-                        writer.write(populationResult.toString()+ "\n");
-                        writer.write("Total da população em t = " + i+ "\n");
-                        writer.write(totalPopulationChange[i] + "\n");
-                    }
-                    
-                    graphResults = new double[1][generations+1];
-                	for(int i = 0; i < generations+1; i++) {
-                		graphResults[0][i] = totalPopulationChange[i];
-                	}
-                    createGraph(graphResults, format_gnuplot_files, "Número Total De Individuos", "Número Total De Individuos", "Momento", "Dimensão da população", populationName+"NúmeroTotalDeIndividuos"+outputFileGraphFormat);
-                }
-                if (vec[2] == 1) {
-                    rateOfChange = rateofchange(leslie, population, generations);
-                    writer.write("\nTaxa de variação ao longo dos anos: "+ "\n");
-                    for(int i = 0; i < generations; i++) {
-                        writer.write(rateOfChange[i] + "\n");
-                    }
-                    
-                    graphResults = new double[1][generations];
-                	for(int i = 0; i < generations; i++) {
-                		graphResults[0][i] = rateOfChange[i];
-                	}
-                	createGraph(graphResults, format_gnuplot_files, "Crescimento da população", "Crescimento da população", "Momento", "Variação", populationName+"CrescimentoDaPopulação"+outputFileGraphFormat);
-                }
-                writer.close();
-            } catch (IOException e) {
-                System.out.println("Ocorreu um erro ao escrever/criar o ficheiro.");
-                e.printStackTrace();
-            }
-            
-            for(int i = 0; i <= generations; i++) {
-                numberOfClasses [i] = dimPopulationinT(leslie, population, i).getColumn(0).toDenseVector().toArray();
-            }    
-       
-        	graphResults = new double[generations+1][dim];
-        	for(int i = 0; i < generations+1; i++) {
-        		for(int j = 0; j < dim; j++) {
-        			graphResults[i][j] = numberOfClasses[i][j];
-        		}
-        	}
-        	createGraph(graphResults, format_gnuplot_files, "Número por Classe (não normalizado)", "Número por Classe", "Momento", "Classe", populationName+"NúmeroporClasse(NãoNormalizado)"+outputFileGraphFormat);
-        	
-        	graphResults = new double[generations+1][dim];
-        	for(int i = 0; i < generations+1; i++) {
-        		double total = totalPopulationChange[i];
-        		for(int j = 0; j < dim; j++) {
-        			if(total == 0) {
-        				graphResults[i][j] = 0; 
-        			} else {
-        				graphResults[i][j] = 100*numberOfClasses[i][j]/total;
-        			}
-        		}
-        	}
-        	createGraph(graphResults, format_gnuplot_files, "Número por Classe (normalizado)", "Número por Classe", "Momento", "Classe", populationName+"NúmeroporClasse(Normalizado)"+outputFileGraphFormat);
-        	
-        	double valor = eigen_value(leslie);
-        	double [] vetor = eigen_vec(leslie);
-            creatingTxtFileGraph(leslie, generations, totalPopulationChange, rateOfChange, numberOfClasses, valor, vetor);            
+        	else {
+        		System.exit(0);
+			}
         }
     }
 
@@ -776,23 +778,6 @@ public class Project {
 
                 }
             }
-//            else if (vec[k].equals("s")) {
-//                line = scanner.nextLine();
-//                survival = line.split(",");
-//
-//                for (int i = 0; i < survival.length; i++) {
-//                    survival[i] = survival[i].trim();
-//                    survival[i] = survival[i].substring(3);
-//                }
-//            } else if (vec[k].equals("f")) {
-//                line = scanner.nextLine();
-//                fecundity = line.split(",");
-//
-//                for (int i = 0; i < fecundity.length; i++) {
-//                    fecundity[i] = fecundity[i].trim();
-//                    fecundity[i] = fecundity[i].substring(3);
-//                }
-//            }
         }
 
         return quantity_population.length;
@@ -1125,4 +1110,78 @@ public class Project {
     	
     	return header;
     }
+
+    public static boolean order_class(String filename) throws FileNotFoundException {
+    	Scanner scanner = new Scanner(new File(filename));
+    	String[] vec = initial_vec(filename);
+
+		String line = scanner.nextLine();
+		String[] firstPart = line.split(",");
+		String aux = "";
+		int order = -1;
+		int aux_value = -1;
+		boolean flag = false;
+
+		for (int i = 0; i < vec.length; i++) {
+			if (vec[i].equals("x")) {
+				order = -1;
+
+				for (int j = 0; j < firstPart.length; j++) {
+					firstPart[j] = firstPart[j].trim();
+					aux = firstPart[j].substring(2, 3);
+					aux_value = Integer.parseInt(aux);
+
+					if (aux_value == order + 1) {
+						order++;
+					} else {
+						flag = true;
+					}
+				}
+			} else if (vec[i].equals("s")) {
+				order = -1;
+
+				line = scanner.nextLine();
+				firstPart = line.split(",");
+
+				for (int j = 0; j < firstPart.length; j++) {
+					firstPart[j] = firstPart[j].trim();
+					aux = firstPart[j].substring(1, 2);
+					aux_value = Integer.parseInt(aux);
+
+					if (aux_value == order + 1) {
+						order++;
+					} else {
+						flag = true;
+						break;
+					}
+				}
+			}
+			else if (vec[i].equals("f")) {
+				order = -1;
+				line = scanner.nextLine();
+				firstPart = line.split(",");
+
+				for (int j = 0; j < firstPart.length; j++) {
+					firstPart[j] = firstPart[j].trim();
+					aux = firstPart[j].substring(1, 2);
+					aux_value = Integer.parseInt(aux);
+
+					if (aux_value == order + 1) {
+						order++;
+					} else {
+						flag = true;
+						break;
+					}
+				}
+			}
+		}
+
+		if (flag) {
+			System.out.println("A ordem dos valores está incorreta no ficheiro de entrada.");
+			return false;
+		}
+		else {
+			return true;
+		}
+	}
 }
