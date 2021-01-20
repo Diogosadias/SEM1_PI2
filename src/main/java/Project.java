@@ -24,11 +24,12 @@ public class Project {
         int save = -1;
         String fileName = "";
         int force = 1;
-        int force1 = 1;
+        String populationName = "";
 
-        while(force == 1) {
-			//Modo interativo sem ficheiro
-			if (args.length == 0) {
+        
+		//Modo interativo sem ficheiro
+		if (args.length == 0) {
+			while(force == 1) {
 				do {
 					System.out.println("Número de grupos etários (dimensão): ");
 					dim = in.nextInt();
@@ -41,6 +42,12 @@ public class Project {
 				System.out.println("Matriz de Leslie: ");
 				Matrix matrix_leslie = convertToMatrix(leslie);
 				System.out.println(matrix_leslie);
+				
+				System.out.println("Nome da população: ");
+				if (in.hasNextLine()) {
+					in.nextLine();
+				}
+				populationName = in.nextLine();
 
 				double eigenvalue = eigen_value(leslie);
 				System.out.println("Valor Próprio: ");
@@ -193,28 +200,29 @@ public class Project {
 					if (!fileName.toLowerCase().endsWith(defaultExtension)) {
 						fileName = fileName + defaultExtension;
 					}
-					createGraph(graphResults, save, graphTitle, resulType, xLine, yLine, fileName);
+					createGraph(graphResults, save, graphTitle, resulType, xLine, yLine, populationName + fileName);
 				}
 				creatingTxtFileGraph(leslie, gen, totalPopulationChange, rateOfChange, numberOfClasses, eigenvalue, eigenvector);
-			}
-			
-			force = -1;
-			while (force == -1) {
-				System.out.println("Deseja sair ou continuar no programa?");
-				System.out.println(" 1-Continuar");
-				System.out.println(" 0-Sair");
-				force = in.nextInt();
+				
+				force = -1;
+				while (force == -1) {
+					System.out.println("Deseja sair ou continuar no programa?");
+					System.out.println(" 1-Continuar");
+					System.out.println(" 0-Sair");
+					force = in.nextInt();
 
-				if (force < 0 || force > 1) {
-					System.out.println("Escolha inválida.");
-					force = -1;
+					if (force < 0 || force > 1) {
+						System.out.println("Escolha inválida.");
+						force = -1;
+					}
 				}
 			}
 		}
 
-        while(force == 1) {
-			//Modo interativo com ficheiro: java -jar nome_programa.jar -n nome_ficheiro_entrada.txt
-			if (args.length == 2) {
+        
+		//Modo interativo com ficheiro: java -jar nome_programa.jar -n nome_ficheiro_entrada.txt
+		if (args.length == 2) {
+			while(force == 1) {
 				do {
 					System.out.println("Número de grupos etários: "); //grupos etários - dimensão
 					dim = getdimfromLeslieMatrixFile(args[1]);
@@ -229,6 +237,12 @@ public class Project {
 				double[][] leslie = convertToDouble(matrix_leslie);
 
 				//Mostrar Resultados obtidos
+				File f = new File(args[args.length-1]);
+				populationName = f.getName();
+				if(populationName.toLowerCase().endsWith(".txt")) {
+					populationName = populationName.substring(0, populationName.length()-4);
+				}
+				
 				double eigenvalue = eigen_value(leslie);
 				System.out.println("Valor Próprio: ");
 				System.out.println(eigenvalue);
@@ -380,21 +394,21 @@ public class Project {
 					if (!fileName.toLowerCase().endsWith(defaultExtension)) {
 						fileName = fileName + defaultExtension;
 					}
-					createGraph(graphResults, save, graphTitle, resulType, xLine, yLine, fileName);
+					createGraph(graphResults, save, graphTitle, resulType, xLine, yLine, populationName + fileName);
 				}
 				creatingTxtFileGraph(leslie, gen, totalPopulationChange, rateOfChange, numberOfClasses, eigenvalue, eigenvector);
-			}
-			
-			force = -1;
-			while (force == -1) {
-				System.out.println("Deseja sair ou continuar no programa?");
-				System.out.println(" 1-Continuar");
-				System.out.println(" 0-Sair");
-				force = in.nextInt();
+				
+				force = -1;
+				while (force == -1) {
+					System.out.println("Deseja sair ou continuar no programa?");
+					System.out.println(" 1-Continuar");
+					System.out.println(" 0-Sair");
+					force = in.nextInt();
 
-				if (force < 0 || force > 1) {
-					System.out.println("Escolha inválida.");
-					force = -1;
+					if (force < 0 || force > 1) {
+						System.out.println("Escolha inválida.");
+						force = -1;
+					}
 				}
 			}
 		}
