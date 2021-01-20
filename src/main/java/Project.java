@@ -86,6 +86,7 @@ public class Project {
 				String xLine = "";
 				String yLine = "";
 				int graphType = -1;
+				graph = -1;
 				while (graph == -1) {
 					System.out.println("Qual dos gráficos deseja gerar: ");
 					System.out.println(" 1-Número total de individuos");
@@ -155,13 +156,14 @@ public class Project {
 					}
 				}
 				createGraph(graphResults, 0, graphTitle, resulType, xLine, yLine, "");
-
+				
+				save = -1;
 				while (save == -1) {
 					System.out.println("Guardar como: ");
 					System.out.println(" 1-png");
 					System.out.println(" 2-txt");
 					System.out.println(" 3-eps");
-					System.out.println(" 0-Sair sem guardar");
+					System.out.println(" 0-Não guardar");
 					save = in.nextInt();
 
 					if (save < 0 || save > 3) {
@@ -195,9 +197,22 @@ public class Project {
 				}
 				creatingTxtFileGraph(leslie, gen, totalPopulationChange, rateOfChange, numberOfClasses, eigenvalue, eigenvector);
 			}
+			
+			force = -1;
+			while (force == -1) {
+				System.out.println("Deseja sair ou continuar no programa?");
+				System.out.println(" 1-Continuar");
+				System.out.println(" 0-Sair");
+				force = in.nextInt();
+
+				if (force < 0 || force > 1) {
+					System.out.println("Escolha inválida.");
+					force = -1;
+				}
+			}
 		}
 
-        while(force1 == 1) {
+        while(force == 1) {
 			//Modo interativo com ficheiro: java -jar nome_programa.jar -n nome_ficheiro_entrada.txt
 			if (args.length == 2) {
 				do {
@@ -258,6 +273,7 @@ public class Project {
 				String xLine = "";
 				String yLine = "";
 				int graphType = -1;
+				graph = -1;
 				while (graph == -1) {
 					System.out.println("\n\nQual dos gráficos deseja gerar: ");
 					System.out.println(" 1-Número total de individuos");
@@ -327,13 +343,14 @@ public class Project {
 					}
 				}
 				createGraph(graphResults, 0, graphTitle, resulType, xLine, yLine, "");
-
+				
+				save = -1;
 				while (save == -1) {
 					System.out.println("Guardar como: ");
 					System.out.println(" 1-png");
 					System.out.println(" 2-txt");
 					System.out.println(" 3-eps");
-					System.out.println(" 0-Sair sem guardar");
+					System.out.println(" 0-Não guardar");
 					save = in.nextInt();
 
 					if (save < 0 || save > 3) {
@@ -366,6 +383,19 @@ public class Project {
 					createGraph(graphResults, save, graphTitle, resulType, xLine, yLine, fileName);
 				}
 				creatingTxtFileGraph(leslie, gen, totalPopulationChange, rateOfChange, numberOfClasses, eigenvalue, eigenvector);
+			}
+			
+			force = -1;
+			while (force == -1) {
+				System.out.println("Deseja sair ou continuar no programa?");
+				System.out.println(" 1-Continuar");
+				System.out.println(" 0-Sair");
+				force = in.nextInt();
+
+				if (force < 0 || force > 1) {
+					System.out.println("Escolha inválida.");
+					force = -1;
+				}
 			}
 		}
 
