@@ -454,7 +454,6 @@ public class Project {
                 }
                 if (vec[2] == 1) {
                     rateOfChange = rateofchange(leslie, population, generations);
-
                     writer.write("\nTaxa de variação ao longo dos anos: "+ "\n");
                     for(int i = 0; i < generations; i++) {
                         writer.write(rateOfChange[i] + "\n");
