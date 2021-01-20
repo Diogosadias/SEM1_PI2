@@ -449,6 +449,12 @@ public class Project {
                 }
             }
 
+            File f = new File(args[args.length-2]);
+			populationName = f.getName();
+			if(populationName.toLowerCase().endsWith(".txt")) {
+				populationName = populationName.substring(0, populationName.length()-4);
+			}
+			
             try {
                 File file = new File(args[args.length - 1]);
                 FileWriter writer = new FileWriter(args[args.length - 1]);
@@ -500,7 +506,7 @@ public class Project {
                 	for(int i = 0; i < generations+1; i++) {
                 		graphResults[0][i] = totalPopulationChange[i];
                 	}
-                    createGraph(graphResults, format_gnuplot_files, "Número Total De Individuos", "Número Total De Individuos", "Momento", "Dimensão da população", "NúmeroTotalDeIndividuos"+outputFileGraphFormat);
+                    createGraph(graphResults, format_gnuplot_files, "Número Total De Individuos", "Número Total De Individuos", "Momento", "Dimensão da população", populationName+"NúmeroTotalDeIndividuos"+outputFileGraphFormat);
                 }
                 if (vec[2] == 1) {
                     rateOfChange = rateofchange(leslie, population, generations);
@@ -513,7 +519,7 @@ public class Project {
                 	for(int i = 0; i < generations; i++) {
                 		graphResults[0][i] = rateOfChange[i];
                 	}
-                	createGraph(graphResults, format_gnuplot_files, "Crescimento da população", "Crescimento da população", "Momento", "Variação", "CrescimentoDaPopulação"+outputFileGraphFormat);
+                	createGraph(graphResults, format_gnuplot_files, "Crescimento da população", "Crescimento da população", "Momento", "Variação", populationName+"CrescimentoDaPopulação"+outputFileGraphFormat);
                 }
                 writer.close();
             } catch (IOException e) {
@@ -531,7 +537,7 @@ public class Project {
         			graphResults[i][j] = numberOfClasses[i][j];
         		}
         	}
-        	createGraph(graphResults, format_gnuplot_files, "Número por Classe (não normalizado)", "Número por Classe", "Momento", "Classe", "NúmeroporClasse(NãoNormalizado)"+outputFileGraphFormat);
+        	createGraph(graphResults, format_gnuplot_files, "Número por Classe (não normalizado)", "Número por Classe", "Momento", "Classe", populationName+"NúmeroporClasse(NãoNormalizado)"+outputFileGraphFormat);
         	
         	graphResults = new double[generations+1][dim];
         	for(int i = 0; i < generations+1; i++) {
@@ -544,7 +550,7 @@ public class Project {
         			}
         		}
         	}
-        	createGraph(graphResults, format_gnuplot_files, "Número por Classe (normalizado)", "Número por Classe", "Momento", "Classe", "NúmeroporClasse(Normalizado)"+outputFileGraphFormat);
+        	createGraph(graphResults, format_gnuplot_files, "Número por Classe (normalizado)", "Número por Classe", "Momento", "Classe", populationName+"NúmeroporClasse(Normalizado)"+outputFileGraphFormat);
         	
         	double valor = eigen_value(leslie);
         	double [] vetor = eigen_vec(leslie);
