@@ -410,12 +410,14 @@ public class Project {
 
                 //Retirar do ficheiro Matrix de Leslie e População
                 leslie = MatrixWriteFile(args[args.length - 2],dim);
-                writer.write("\nMatriz de Leslie"+ "\n");
-                writer.write(leslie+"\n");
+                Matrix leslie_f = convertToMatrix(leslie);
+                writer.write("\nMatriz de Leslie: \n");
+                writer.write(leslie_f + "\n");
 
-                writer.write("\nValores da população Inicial: "+ "\n");
+                writer.write("Valores da população Inicial: "+ "\n");
                 population = getPopulationfromFile(args[args.length-2],dim);
-                writer.write(population + "\n");
+                Matrix populatin_f = convertToMatrix(population);
+                writer.write(populatin_f + "\n");
 
 
                 if (vec[0] == 1) {
@@ -429,7 +431,7 @@ public class Project {
                         totalPopulationChange[i] = totaldimPopulation(populationResult);
                         writer.write("\nDimensão da população em t = " + i + "\n");
                         writer.write(populationResult.toString()+ "\n");
-                        writer.write("\nTotal da população em t = " + i+ "\n");
+                        writer.write("Total da população em t = " + i+ "\n");
                         writer.write(totalPopulationChange[i] + "\n");
                     }
                 }
