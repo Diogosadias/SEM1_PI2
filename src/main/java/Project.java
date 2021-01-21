@@ -19,200 +19,12 @@ public class Project {
 	
     public static void main(String[] args) throws IOException {
         Scanner in = new Scanner(System.in);
-        int dim = -1;
-        int gen = -1;
-        int graph = -1;
-        int save = -1;
-        String fileName = "";
         int force = 1;
-        String populationName = "";
 
 		//Modo interativo sem ficheiro
 		if (args.length == 0) {
 			while(force == 1) {
-				do {
-					System.out.println("Número de grupos etários (dimensão): ");
-					dim = in.nextInt();
-					System.out.println("Número de gerações a calcular: ");
-					gen = in.nextInt();
-				} while (dim < 0 && gen < 0);
-
-				//Criar Matriz Leslie
-				double[][] leslie = LeslieMatrix(dim);
-				System.out.println("Matriz de Leslie: ");
-				Matrix matrix_leslie = convertToMatrix(leslie);
-				System.out.println(matrix_leslie);
-				
-				System.out.println("Nome da população: ");
-				if (in.hasNextLine()) {
-					in.nextLine();
-				}
-				populationName = in.nextLine();
-
-				double eigenvalue = eigen_value(leslie);
-				System.out.println("Valor Próprio: ");
-				System.out.println(eigenvalue);
-
-				double[] eigenvector = eigen_vec(leslie);
-				System.out.println("Vetor Próprio: ");
-				System.out.println(Arrays.toString(eigenvector));
-
-				System.out.println("Valores da população Inicial: ");
-				double[][] population = new double[dim][1];
-				for (int i = 0; i < dim; i++) {
-					population[i][0] = in.nextDouble();
-				}
-
-				double[] totalPopulationChange = new double[gen + 1];
-				double value = -1;
-				for (int i = 0; i <= gen; i++) {
-					Matrix populationResult = dimPopulationinT(leslie, population, i); //Possivelmente teremos de alterar em dimPopulationinT inicialização de populationinT
-					totalPopulationChange[i] = totaldimPopulation(populationResult);
-					value = totalPopulationChange[i];
-					value = value * 100;
-					value = Math.ceil(value);
-					value = value / 100;
-					System.out.println("Dimensão da população em t = " + i);
-					System.out.println(populationResult);
-					System.out.println("Total da população em t = " + i);
-					System.out.println(value);
-				}
-
-				double[] rateOfChange = new double[gen];
-				value = -1;
-				rateOfChange = rateofchange(leslie, population, gen);
-				System.out.println("Taxa de variação ao longo dos anos: ");
-				for (int i = 0; i < gen; i++) {
-					value = rateOfChange[i];
-					value = value * 100;
-					value = Math.ceil(value);
-					value = value / 100;
-					System.out.println(value);
-				}
-
-				System.out.println("Valor de classes: ");
-				double[][] numberOfClasses = new double[gen + 1][dim];
-				for (int i = 0; i <= gen; i++) {
-					numberOfClasses[i] = dimPopulationinT(leslie, population, i).getColumn(0).toDenseVector().toArray();
-					System.out.println(Arrays.toString(numberOfClasses[i]));
-				}
-
-				double[][] graphResults = new double[1][1];
-				String graphTitle = "";
-				String resulType = "";
-				String xLine = "";
-				String yLine = "";
-				int graphType = -1;
-				graph = -1;
-				while (graph == -1) {
-					System.out.println("Qual dos gráficos deseja gerar: ");
-					System.out.println(" 1-Número total de individuos");
-					System.out.println(" 2-Crescimento da população");
-					System.out.println(" 3-Numero por classe (não normalizado)");
-					System.out.println(" 4-Numero por classe (normalizado)");
-					graph = in.nextInt();
-
-					switch (graph) {
-						case 1:
-							graphResults = new double[1][gen + 1];
-							for (int i = 0; i < gen + 1; i++) {
-								graphResults[0][i] = totalPopulationChange[i];
-							}
-							graphTitle = "Número Total De Individuos";
-							resulType = "Número Total De Individuos";
-							xLine = "Momento";
-							yLine = "Dimensão da população";
-							graphType = 1;
-							break;
-						case 2:
-							graphResults = new double[1][gen];
-							for (int i = 0; i < gen; i++) {
-								graphResults[0][i] = rateOfChange[i];
-							}
-							graphTitle = "Crescimento da população";
-							resulType = "Crescimento da população";
-							xLine = "Momento";
-							yLine = "Variação";
-							graphType = 2;
-							break;
-						case 3:
-							graphResults = new double[gen + 1][dim];
-							for (int i = 0; i < gen + 1; i++) {
-								for (int j = 0; j < dim; j++) {
-									graphResults[i][j] = numberOfClasses[i][j];
-								}
-							}
-							graphTitle = "Número por Classe (não normalizado)";
-							resulType = "Número por Classe";
-							xLine = "Momento";
-							yLine = "Classe";
-							graphType = 3;
-							break;
-						case 4:
-							graphResults = new double[gen + 1][dim];
-							for (int i = 0; i < gen + 1; i++) {
-								double total = totalPopulationChange[i];
-								for (int j = 0; j < dim; j++) {
-									if (total == 0) {
-										graphResults[i][j] = 0;
-									} else {
-										graphResults[i][j] = 100 * numberOfClasses[i][j] / total;
-									}
-								}
-							}
-							graphTitle = "Número por Classe (normalizado)";
-							resulType = "Número por Classe";
-							xLine = "Momento";
-							yLine = "Classe";
-							graphType = 4;
-							break;
-						default:
-							System.out.println("Escolha inválida.");
-							graph = -1;
-							break;
-					}
-				}
-				createGraph(graphResults, 0, graphTitle, resulType, xLine, yLine, "");
-				
-				save = -1;
-				while (save == -1) {
-					System.out.println("Guardar como: ");
-					System.out.println(" 1-png");
-					System.out.println(" 2-txt");
-					System.out.println(" 3-eps");
-					System.out.println(" 0-Não guardar");
-					save = in.nextInt();
-
-					if (save < 0 || save > 3) {
-						System.out.println("Escolha inválida.");
-						save = -1;
-					}
-				}
-				if (save != 0) {
-					System.out.println("Nome do ficheiro: ");
-					if (in.hasNextLine()) {
-						in.nextLine();
-					}
-					fileName = in.nextLine();
-
-					String defaultExtension = "";
-					switch (save) {
-						case 1:
-							defaultExtension = ".png";
-							break;
-						case 2:
-							defaultExtension = ".txt";
-							break;
-						case 3:
-							defaultExtension = ".eps";
-							break;
-					}
-					if (!fileName.toLowerCase().endsWith(defaultExtension)) {
-						fileName = fileName + defaultExtension;
-					}
-					createGraph(graphResults, save, graphTitle, resulType, xLine, yLine, populationName + fileName);
-				}
-				creatingTxtFileGraph(leslie, gen, totalPopulationChange, rateOfChange, numberOfClasses, eigenvalue, eigenvector);
+				interactiveWayNonFile(in);
 				
 				force = -1;
 				while (force == -1) {
@@ -235,190 +47,7 @@ public class Project {
 				System.out.println("Ficheiro corretamente formatado.");
 			}
 			while(force == 1) {
-				do {
-					System.out.println("Número de grupos etários: "); //grupos etários - dimensão
-					dim = getdimfromLeslieMatrixFile(args[1]);
-					System.out.println(dim); //Imprime mas não pede
-					System.out.println("\nNúmero de gerações a calcular: "); //gerações
-					gen = in.nextInt();
-				} while (dim < 0 && gen < 0);
-
-				//Criar Matriz Leslie com ficheiro
-				Matrix matrix_leslie = LeslieMatrixFile(args[1], dim);
-				System.out.println(matrix_leslie);
-				double[][] leslie = convertToDouble(matrix_leslie);
-
-				//Mostrar Resultados obtidos
-				File f = new File(args[args.length-1]);
-				populationName = f.getName();
-				if(populationName.toLowerCase().endsWith(".txt")) {
-					populationName = populationName.substring(0, populationName.length()-4);
-				}
-
-				double eigenvalue = eigen_value(leslie);
-				System.out.println("Valor Próprio: ");
-				System.out.println(eigenvalue);
-
-				double[] eigenvector = eigen_vec(leslie);
-				System.out.println("\nVetor Próprio: ");
-				System.out.println(Arrays.toString(eigenvector));
-
-				System.out.println("\nValores da população Inicial: ");
-				double[][] population = getPopulationfromFile(args[1], dim);
-				for (int i = 0; i < dim; i++) {
-					System.out.println(population[i][0]);
-				}
-
-				double[] totalPopulationChange = new double[gen + 1];
-				double value = -1;
-				for (int i = 0; i <= gen; i++) {
-					Matrix populationResult = dimPopulationinT(leslie, population, i);
-					totalPopulationChange[i] = totaldimPopulation(populationResult);
-					value = totalPopulationChange[i];
-					value = value * 100;
-					value = Math.ceil(value);
-					value = value / 100;
-					System.out.println("\nDimensão da população em t = " + i);
-					System.out.println(populationResult);
-					System.out.println("Total da população em t = " + i);
-					System.out.println(value);
-				}
-
-				double[] rateOfChange = new double[gen];
-				value = -1;
-				rateOfChange = rateofchange(leslie, population, gen);
-				System.out.println("\nTaxa de variação ao longo dos anos: ");
-				for (int i = 0; i < gen; i++) {
-					value = rateOfChange[i];
-					value = value * 100;
-					value = Math.ceil(value);
-					value = value / 100;
-					System.out.println(value);
-				}
-
-				System.out.println("\nValor de classes: ");
-				double[][] numberOfClasses = new double[gen + 1][dim];
-				for (int i = 0; i <= gen; i++) {
-					numberOfClasses[i] = dimPopulationinT(leslie, population, i).getColumn(0).toDenseVector().toArray();
-					System.out.println(Arrays.toString(numberOfClasses[i]));
-				}
-
-				double[][] graphResults = new double[1][1];
-				String graphTitle = "";
-				String resulType = "";
-				String xLine = "";
-				String yLine = "";
-				int graphType = -1;
-				graph = -1;
-				while (graph == -1) {
-					System.out.println("\n\nQual dos gráficos deseja gerar: ");
-					System.out.println(" 1-Número total de individuos");
-					System.out.println(" 2-Crescimento da população");
-					System.out.println(" 3-Numero por classe (não normalizado)");
-					System.out.println(" 4-Numero por classe (normalizado)");
-					graph = in.nextInt();
-
-					switch (graph) {
-						case 1:
-							graphResults = new double[1][gen + 1];
-							for (int i = 0; i < gen + 1; i++) {
-								graphResults[0][i] = totalPopulationChange[i];
-							}
-							graphTitle = "Número Total De Individuos";
-							resulType = "Número Total De Individuos";
-							xLine = "Momento";
-							yLine = "Dimensão da população";
-							graphType = 1;
-							break;
-						case 2:
-							graphResults = new double[1][gen];
-							for (int i = 0; i < gen; i++) {
-								graphResults[0][i] = rateOfChange[i];
-							}
-							graphTitle = "Crescimento da população";
-							resulType = "Crescimento da população";
-							xLine = "Momento";
-							yLine = "Variação";
-							graphType = 2;
-							break;
-						case 3:
-							graphResults = new double[gen + 1][dim];
-							for (int i = 0; i < gen + 1; i++) {
-								for (int j = 0; j < dim; j++) {
-									graphResults[i][j] = numberOfClasses[i][j];
-								}
-							}
-							graphTitle = "Número por Classe (não normalizado)";
-							resulType = "Número por Classe";
-							xLine = "Momento";
-							yLine = "Classe";
-							graphType = 3;
-							break;
-						case 4:
-							graphResults = new double[gen + 1][dim];
-							for (int i = 0; i < gen + 1; i++) {
-								double total = totalPopulationChange[i];
-								for (int j = 0; j < dim; j++) {
-									if (total == 0) {
-										graphResults[i][j] = 0;
-									} else {
-										graphResults[i][j] = 100 * numberOfClasses[i][j] / total;
-									}
-								}
-							}
-							graphTitle = "Número por Classe (normalizado)";
-							resulType = "Número por Classe";
-							xLine = "Momento";
-							yLine = "Classe";
-							graphType = 4;
-							break;
-						default:
-							System.out.println("Escolha inválida.");
-							graph = -1;
-							break;
-					}
-				}
-				createGraph(graphResults, 0, graphTitle, resulType, xLine, yLine, "");
-
-				save = -1;
-				while (save == -1) {
-					System.out.println("Guardar como: ");
-					System.out.println(" 1-png");
-					System.out.println(" 2-txt");
-					System.out.println(" 3-eps");
-					System.out.println(" 0-Não guardar");
-					save = in.nextInt();
-
-					if (save < 0 || save > 3) {
-						System.out.println("Escolha inválida.");
-						save = -1;
-					}
-				}
-				if (save != 0) {
-					System.out.println("Nome do ficheiro: ");
-					if (in.hasNextLine()) {
-						in.nextLine();
-					}
-					fileName = in.nextLine();
-
-					String defaultExtension = "";
-					switch (save) {
-						case 1:
-							defaultExtension = ".png";
-							break;
-						case 2:
-							defaultExtension = ".txt";
-							break;
-						case 3:
-							defaultExtension = ".eps";
-							break;
-					}
-					if (!fileName.toLowerCase().endsWith(defaultExtension)) {
-						fileName = fileName + defaultExtension;
-					}
-					createGraph(graphResults, save, graphTitle, resulType, xLine, yLine, populationName + fileName);
-				}
-				creatingTxtFileGraph(leslie, gen, totalPopulationChange, rateOfChange, numberOfClasses, eigenvalue, eigenvector);
+				interactiveWayWithFile(in, args);
 
 				force = -1;
 				while (force == -1) {
@@ -435,164 +64,11 @@ public class Project {
 			}
 		}
 
-//        Modo não interativo com ficheiro: java -jar nome_programa.jar -t XXX -g Y -e -v -r nome_ficheiro_entrada.txt nome_ficheiro_saida.txt
+        //Modo não interativo com ficheiro: java -jar nome_programa.jar -t XXX -g Y -e -v -r nome_ficheiro_entrada.txt nome_ficheiro_saida.txt
         if (args.length > 2) {
         	if (order_class(args[args.length - 2])) {
-				String outputFileGraphFormat = "";
-
-				int[] vec = new int[3];
-				int pos_t = -1, pos_g = -1;
-				for (int i = 0; i < args.length; i++) {
-					if (args[i].equals("-t")) {
-						pos_t = i;
-					}
-					if (args[i].equals("-g")) {
-						pos_g = i;
-					}
-					if (args[i].equals("-e")) {
-						vec[0] = 1;
-					}
-					if (args[i].equals("-v")) {
-						vec[1] = 1;
-					}
-					if (args[i].equals("-r")) {
-						vec[2] = 1;
-					}
-				}
-
-				String generations_aux = args[pos_t + 1];
-				int generations = Integer.parseInt(generations_aux); //gerações a calcular
-				String format_gnuplot_files_aux = args[pos_g + 1];
-				int format_gnuplot_files = Integer.parseInt(format_gnuplot_files_aux); //formato do ficheiro a executar
-
-				do {
-					System.out.println("Número de grupos etários (dimensão): ");
-					dim = getdimfromLeslieMatrixFile(args[args.length-2]);
-					System.out.println(dim); //Grupos etários
-				} while (dim < 0);
-
-				double [][] graphResults = new double [1][1];
-				double[] totalPopulationChange = new double[generations+1];
-				double [] rateOfChange = new double [generations];
-				double [][] numberOfClasses = new double[generations+1][dim];
-				double[][] leslie = new double[dim][dim];
-				double[][] population = new double[dim][1];
-
-				File f = new File(args[args.length-2]);
-				populationName = f.getName();
-				if(populationName.toLowerCase().endsWith(".txt")) {
-					populationName = populationName.substring(0, populationName.length()-4);
-				}
-
-				try {
-					File file = new File(args[args.length - 1]);
-					FileWriter writer = new FileWriter(args[args.length - 1]);
-
-					System.out.println("Ficheiro criado: " + file.getName());
-					writer.write("Gerações: \n" + generations + "\n");
-					writer.write("Formato ficheiro gnuplot: \n" + format_gnuplot_files + "\n");
-
-					//Retirar do ficheiro Matrix de Leslie e População
-					leslie = MatrixWriteFile(args[args.length - 2],dim);
-					Matrix leslie_f = convertToMatrix(leslie);
-					writer.write("\nMatriz de Leslie: \n");
-					writer.write(leslie_f + "\n");
-
-					writer.write("Valores da população Inicial: "+ "\n");
-					population = getPopulationfromFile(args[args.length-2],dim);
-					Matrix populatin_f = convertToMatrix(population);
-					writer.write(populatin_f + "\n");
-
-					switch(format_gnuplot_files) {
-						case 2:
-							outputFileGraphFormat = ".txt";
-							break;
-						case 3:
-							outputFileGraphFormat = ".eps";
-							break;
-						default:
-							outputFileGraphFormat = ".png";
-							break;
-					}
-
-					if (vec[0] == 1) {
-						writer.write("Valor Próprio: \n" + eigen_value(leslie) + "\n");
-						writer.write("Vetor Próprio: \n" + Arrays.toString(eigen_vec(leslie)) + "\n");
-
-					}
-					if (vec[1] == 1) {
-						double value = -1;
-						for(int i = 0; i <= generations; i++) {
-							Matrix populationResult = dimPopulationinT(leslie, population, i);
-							totalPopulationChange[i] = totaldimPopulation(populationResult);
-							value = totalPopulationChange[i];
-							value = value * 100;
-							value = Math.ceil(value);
-							value = value / 100;
-							writer.write("\nDimensão da população em t = " + i + "\n");
-							writer.write(populationResult.toString()+ "\n");
-							writer.write("Total da população em t = " + i+ "\n");
-							writer.write(value + "\n");
-						}
-
-					graphResults = new double[1][generations+1];
-					for (int i = 0; i < generations+1; i++) {
-						graphResults[0][i] = totalPopulationChange[i];
-					}
-					createGraph(graphResults, format_gnuplot_files, "Número Total De Individuos", "Número Total De Individuos", "Momento", "Dimensão da população", populationName+"NúmeroTotalDeIndividuos"+outputFileGraphFormat);
-					}
-					if (vec[2] == 1) {
-						rateOfChange = rateofchange(leslie, population, generations);
-						double value = -1;
-						writer.write("\nTaxa de variação ao longo dos anos: "+ "\n");
-						for(int i = 0; i < generations; i++) {
-							value = rateOfChange[i];
-							value = value * 100;
-							value = Math.ceil(value);
-							value = value / 100;
-							writer.write(value + "\n");
-						}
-
-					graphResults = new double[1][generations];
-					for(int i = 0; i < generations; i++) {
-						graphResults[0][i] = rateOfChange[i];
-					}
-					createGraph(graphResults, format_gnuplot_files, "Crescimento da população", "Crescimento da população", "Momento", "Variação", populationName+"CrescimentoDaPopulação"+outputFileGraphFormat);
-					}
-					writer.close();
-				} catch (IOException e) {
-					System.out.println("Ocorreu um erro ao escrever/criar o ficheiro.");
-					e.printStackTrace();
-				}
-
-				for(int i = 0; i <= generations; i++) {
-					numberOfClasses [i] = dimPopulationinT(leslie, population, i).getColumn(0).toDenseVector().toArray();
-				}
-
-				graphResults = new double[generations+1][dim];
-				for(int i = 0; i < generations+1; i++) {
-					for(int j = 0; j < dim; j++) {
-						graphResults[i][j] = numberOfClasses[i][j];
-					}
-				}
-				createGraph(graphResults, format_gnuplot_files, "Número por Classe (não normalizado)", "Número por Classe", "Momento", "Classe", populationName+"NúmeroporClasse(NãoNormalizado)"+outputFileGraphFormat);
-
-				graphResults = new double[generations+1][dim];
-				for(int i = 0; i < generations+1; i++) {
-					double total = totalPopulationChange[i];
-					for(int j = 0; j < dim; j++) {
-						if(total == 0) {
-							graphResults[i][j] = 0;
-						} else {
-							graphResults[i][j] = 100*numberOfClasses[i][j]/total;
-						}
-					}
-				}
-				createGraph(graphResults, format_gnuplot_files, "Número por Classe (normalizado)", "Número por Classe", "Momento", "Classe", populationName+"NúmeroporClasse(Normalizado)"+outputFileGraphFormat);
-
-				double valor = eigen_value(leslie);
-				double [] vetor = eigen_vec(leslie);
-				creatingTxtFileGraph(leslie, generations, totalPopulationChange, rateOfChange, numberOfClasses, valor, vetor);
+				nonInteractiveWay(args);
+				
 			}
         	else {
         		System.exit(0);
@@ -600,6 +76,567 @@ public class Project {
         }
     }
 
+    public static void interactiveWayNonFile(Scanner in) throws IOException {
+    	int dim = -1;
+        int gen = -1;
+        int graph = -1;
+        int save = -1;
+        String fileName = "";
+        String populationName = "";
+        
+    	do {
+			System.out.println("Número de grupos etários (dimensão): ");
+			dim = in.nextInt();
+			System.out.println("Número de gerações a calcular: ");
+			gen = in.nextInt();
+		} while (dim < 0 && gen < 0);
+
+		//Criar Matriz Leslie
+		double[][] leslie = LeslieMatrix(dim);
+		System.out.println("Matriz de Leslie: ");
+		Matrix matrix_leslie = convertToMatrix(leslie);
+		System.out.println(matrix_leslie);
+		
+		System.out.println("Nome da população: ");
+		if (in.hasNextLine()) {
+			in.nextLine();
+		}
+		populationName = in.nextLine();
+
+		double eigenvalue = eigen_value(leslie);
+		System.out.println("Valor Próprio: ");
+		System.out.println(eigenvalue);
+
+		double[] eigenvector = eigen_vec(leslie);
+		System.out.println("Vetor Próprio: ");
+		System.out.println(Arrays.toString(eigenvector));
+
+		System.out.println("Valores da população Inicial: ");
+		double[][] population = new double[dim][1];
+		for (int i = 0; i < dim; i++) {
+			population[i][0] = in.nextDouble();
+		}
+
+		double[] totalPopulationChange = new double[gen + 1];
+		double value = -1;
+		for (int i = 0; i <= gen; i++) {
+			Matrix populationResult = dimPopulationinT(leslie, population, i); //Possivelmente teremos de alterar em dimPopulationinT inicialização de populationinT
+			totalPopulationChange[i] = totaldimPopulation(populationResult);
+			value = totalPopulationChange[i];
+			value = value * 100;
+			value = Math.ceil(value);
+			value = value / 100;
+			System.out.println("Dimensão da população em t = " + i);
+			System.out.println(populationResult);
+			System.out.println("Total da população em t = " + i);
+			System.out.println(value);
+		}
+
+		double[] rateOfChange = new double[gen];
+		value = -1;
+		rateOfChange = rateofchange(leslie, population, gen);
+		System.out.println("Taxa de variação ao longo dos anos: ");
+		for (int i = 0; i < gen; i++) {
+			value = rateOfChange[i];
+			value = value * 100;
+			value = Math.ceil(value);
+			value = value / 100;
+			System.out.println(value);
+		}
+
+		System.out.println("Valor de classes: ");
+		double[][] numberOfClasses = new double[gen + 1][dim];
+		for (int i = 0; i <= gen; i++) {
+			numberOfClasses[i] = dimPopulationinT(leslie, population, i).getColumn(0).toDenseVector().toArray();
+			System.out.println(Arrays.toString(numberOfClasses[i]));
+		}
+
+		double[][] graphResults = new double[1][1];
+		String graphTitle = "";
+		String resulType = "";
+		String xLine = "";
+		String yLine = "";
+		int graphType = -1;
+		graph = -1;
+		while (graph == -1) {
+			System.out.println("Qual dos gráficos deseja gerar: ");
+			System.out.println(" 1-Número total de individuos");
+			System.out.println(" 2-Crescimento da população");
+			System.out.println(" 3-Numero por classe (não normalizado)");
+			System.out.println(" 4-Numero por classe (normalizado)");
+			graph = in.nextInt();
+
+			switch (graph) {
+				case 1:
+					graphResults = new double[1][gen + 1];
+					for (int i = 0; i < gen + 1; i++) {
+						graphResults[0][i] = totalPopulationChange[i];
+					}
+					graphTitle = "Número Total De Individuos";
+					resulType = "Número Total De Individuos";
+					xLine = "Momento";
+					yLine = "Dimensão da população";
+					graphType = 1;
+					break;
+				case 2:
+					graphResults = new double[1][gen];
+					for (int i = 0; i < gen; i++) {
+						graphResults[0][i] = rateOfChange[i];
+					}
+					graphTitle = "Crescimento da população";
+					resulType = "Crescimento da população";
+					xLine = "Momento";
+					yLine = "Variação";
+					graphType = 2;
+					break;
+				case 3:
+					graphResults = new double[gen + 1][dim];
+					for (int i = 0; i < gen + 1; i++) {
+						for (int j = 0; j < dim; j++) {
+							graphResults[i][j] = numberOfClasses[i][j];
+						}
+					}
+					graphTitle = "Número por Classe (não normalizado)";
+					resulType = "Número por Classe";
+					xLine = "Momento";
+					yLine = "Classe";
+					graphType = 3;
+					break;
+				case 4:
+					graphResults = new double[gen + 1][dim];
+					for (int i = 0; i < gen + 1; i++) {
+						double total = totalPopulationChange[i];
+						for (int j = 0; j < dim; j++) {
+							if (total == 0) {
+								graphResults[i][j] = 0;
+							} else {
+								graphResults[i][j] = 100 * numberOfClasses[i][j] / total;
+							}
+						}
+					}
+					graphTitle = "Número por Classe (normalizado)";
+					resulType = "Número por Classe";
+					xLine = "Momento";
+					yLine = "Classe";
+					graphType = 4;
+					break;
+				default:
+					System.out.println("Escolha inválida.");
+					graph = -1;
+					break;
+			}
+		}
+		createGraph(graphResults, 0, graphTitle, resulType, xLine, yLine, "");
+		
+		save = -1;
+		while (save == -1) {
+			System.out.println("Guardar como: ");
+			System.out.println(" 1-png");
+			System.out.println(" 2-txt");
+			System.out.println(" 3-eps");
+			System.out.println(" 0-Não guardar");
+			save = in.nextInt();
+
+			if (save < 0 || save > 3) {
+				System.out.println("Escolha inválida.");
+				save = -1;
+			}
+		}
+		if (save != 0) {
+			System.out.println("Nome do ficheiro: ");
+			if (in.hasNextLine()) {
+				in.nextLine();
+			}
+			fileName = in.nextLine();
+
+			String defaultExtension = "";
+			switch (save) {
+				case 1:
+					defaultExtension = ".png";
+					break;
+				case 2:
+					defaultExtension = ".txt";
+					break;
+				case 3:
+					defaultExtension = ".eps";
+					break;
+			}
+			if (!fileName.toLowerCase().endsWith(defaultExtension)) {
+				fileName = fileName + defaultExtension;
+			}
+			createGraph(graphResults, save, graphTitle, resulType, xLine, yLine, populationName + fileName);
+		}
+		creatingTxtFileGraph(leslie, gen, totalPopulationChange, 
+				rateOfChange, numberOfClasses, eigenvalue, eigenvector, true,
+				true, true);
+    }
+    
+    public static void interactiveWayWithFile(Scanner in, String[] args) throws IOException {
+    	int dim = -1;
+        int gen = -1;
+        int graph = -1;
+        int save = -1;
+        String fileName = "";
+        String populationName = "";
+        
+    	do {
+			System.out.println("Número de grupos etários: "); //grupos etários - dimensão
+			dim = getdimfromLeslieMatrixFile(args[1]);
+			System.out.println(dim); //Imprime mas não pede
+			System.out.println("\nNúmero de gerações a calcular: "); //gerações
+			gen = in.nextInt();
+		} while (dim < 0 && gen < 0);
+
+		//Criar Matriz Leslie com ficheiro
+		Matrix matrix_leslie = LeslieMatrixFile(args[1], dim);
+		System.out.println(matrix_leslie);
+		double[][] leslie = convertToDouble(matrix_leslie);
+
+		//Mostrar Resultados obtidos
+		File f = new File(args[args.length-1]);
+		populationName = f.getName();
+		if(populationName.toLowerCase().endsWith(".txt")) {
+			populationName = populationName.substring(0, populationName.length()-4);
+		}
+
+		double eigenvalue = eigen_value(leslie);
+		System.out.println("Valor Próprio: ");
+		System.out.println(eigenvalue);
+
+		double[] eigenvector = eigen_vec(leslie);
+		System.out.println("\nVetor Próprio: ");
+		System.out.println(Arrays.toString(eigenvector));
+
+		System.out.println("\nValores da população Inicial: ");
+		double[][] population = getPopulationfromFile(args[1], dim);
+		for (int i = 0; i < dim; i++) {
+			System.out.println(population[i][0]);
+		}
+
+		double[] totalPopulationChange = new double[gen + 1];
+		double value = -1;
+		for (int i = 0; i <= gen; i++) {
+			Matrix populationResult = dimPopulationinT(leslie, population, i);
+			totalPopulationChange[i] = totaldimPopulation(populationResult);
+			value = totalPopulationChange[i];
+			value = value * 100;
+			value = Math.ceil(value);
+			value = value / 100;
+			System.out.println("\nDimensão da população em t = " + i);
+			System.out.println(populationResult);
+			System.out.println("Total da população em t = " + i);
+			System.out.println(value);
+		}
+
+		double[] rateOfChange = new double[gen];
+		value = -1;
+		rateOfChange = rateofchange(leslie, population, gen);
+		System.out.println("\nTaxa de variação ao longo dos anos: ");
+		for (int i = 0; i < gen; i++) {
+			value = rateOfChange[i];
+			value = value * 100;
+			value = Math.ceil(value);
+			value = value / 100;
+			System.out.println(value);
+		}
+
+		System.out.println("\nValor de classes: ");
+		double[][] numberOfClasses = new double[gen + 1][dim];
+		for (int i = 0; i <= gen; i++) {
+			numberOfClasses[i] = dimPopulationinT(leslie, population, i).getColumn(0).toDenseVector().toArray();
+			System.out.println(Arrays.toString(numberOfClasses[i]));
+		}
+
+		double[][] graphResults = new double[1][1];
+		String graphTitle = "";
+		String resulType = "";
+		String xLine = "";
+		String yLine = "";
+		int graphType = -1;
+		graph = -1;
+		while (graph == -1) {
+			System.out.println("\n\nQual dos gráficos deseja gerar: ");
+			System.out.println(" 1-Número total de individuos");
+			System.out.println(" 2-Crescimento da população");
+			System.out.println(" 3-Numero por classe (não normalizado)");
+			System.out.println(" 4-Numero por classe (normalizado)");
+			graph = in.nextInt();
+
+			switch (graph) {
+				case 1:
+					graphResults = new double[1][gen + 1];
+					for (int i = 0; i < gen + 1; i++) {
+						graphResults[0][i] = totalPopulationChange[i];
+					}
+					graphTitle = "Número Total De Individuos";
+					resulType = "Número Total De Individuos";
+					xLine = "Momento";
+					yLine = "Dimensão da população";
+					graphType = 1;
+					break;
+				case 2:
+					graphResults = new double[1][gen];
+					for (int i = 0; i < gen; i++) {
+						graphResults[0][i] = rateOfChange[i];
+					}
+					graphTitle = "Crescimento da população";
+					resulType = "Crescimento da população";
+					xLine = "Momento";
+					yLine = "Variação";
+					graphType = 2;
+					break;
+				case 3:
+					graphResults = new double[gen + 1][dim];
+					for (int i = 0; i < gen + 1; i++) {
+						for (int j = 0; j < dim; j++) {
+							graphResults[i][j] = numberOfClasses[i][j];
+						}
+					}
+					graphTitle = "Número por Classe (não normalizado)";
+					resulType = "Número por Classe";
+					xLine = "Momento";
+					yLine = "Classe";
+					graphType = 3;
+					break;
+				case 4:
+					graphResults = new double[gen + 1][dim];
+					for (int i = 0; i < gen + 1; i++) {
+						double total = totalPopulationChange[i];
+						for (int j = 0; j < dim; j++) {
+							if (total == 0) {
+								graphResults[i][j] = 0;
+							} else {
+								graphResults[i][j] = 100 * numberOfClasses[i][j] / total;
+							}
+						}
+					}
+					graphTitle = "Número por Classe (normalizado)";
+					resulType = "Número por Classe";
+					xLine = "Momento";
+					yLine = "Classe";
+					graphType = 4;
+					break;
+				default:
+					System.out.println("Escolha inválida.");
+					graph = -1;
+					break;
+			}
+		}
+		createGraph(graphResults, 0, graphTitle, resulType, xLine, yLine, "");
+
+		save = -1;
+		while (save == -1) {
+			System.out.println("Guardar como: ");
+			System.out.println(" 1-png");
+			System.out.println(" 2-txt");
+			System.out.println(" 3-eps");
+			System.out.println(" 0-Não guardar");
+			save = in.nextInt();
+
+			if (save < 0 || save > 3) {
+				System.out.println("Escolha inválida.");
+				save = -1;
+			}
+		}
+		if (save != 0) {
+			System.out.println("Nome do ficheiro: ");
+			if (in.hasNextLine()) {
+				in.nextLine();
+			}
+			fileName = in.nextLine();
+
+			String defaultExtension = "";
+			switch (save) {
+				case 1:
+					defaultExtension = ".png";
+					break;
+				case 2:
+					defaultExtension = ".txt";
+					break;
+				case 3:
+					defaultExtension = ".eps";
+					break;
+			}
+			if (!fileName.toLowerCase().endsWith(defaultExtension)) {
+				fileName = fileName + defaultExtension;
+			}
+			createGraph(graphResults, save, graphTitle, resulType, xLine, yLine, populationName + fileName);
+		}
+		creatingTxtFileGraph(leslie, gen, totalPopulationChange, 
+				rateOfChange, numberOfClasses, eigenvalue, eigenvector, true,
+				true, true);
+    }
+    
+    public static void nonInteractiveWay(String[] args) throws IOException {
+    	int dim = -1;
+        int gen = -1;
+        int graph = -1;
+        int save = -1;
+        String fileName = "";
+        String populationName = "";
+        String outputFileGraphFormat = "";
+        
+    	int[] vec = new int[3];
+		int pos_t = -1, pos_g = -1;
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].equals("-t")) {
+				pos_t = i;
+			}
+			if (args[i].equals("-g")) {
+				pos_g = i;
+			}
+			if (args[i].equals("-e")) {
+				vec[0] = 1;
+			}
+			if (args[i].equals("-v")) {
+				vec[1] = 1;
+			}
+			if (args[i].equals("-r")) {
+				vec[2] = 1;
+			}
+		}
+
+		String generations_aux = args[pos_t + 1];
+		int generations = Integer.parseInt(generations_aux); //gerações a calcular
+		String format_gnuplot_files_aux = args[pos_g + 1];
+		int format_gnuplot_files = Integer.parseInt(format_gnuplot_files_aux); //formato do ficheiro a executar
+
+		do {
+			System.out.println("Número de grupos etários (dimensão): ");
+			dim = getdimfromLeslieMatrixFile(args[args.length-2]);
+			System.out.println(dim); //Grupos etários
+		} while (dim < 0);
+
+		double [][] graphResults = new double [1][1];
+		double[] totalPopulationChange = new double[generations+1];;
+		double [] rateOfChange = new double [generations];
+		double [][] numberOfClasses = new double[generations+1][dim];
+		double[][] leslie = new double[dim][dim];
+		double[][] population = new double[dim][1];
+
+		File f = new File(args[args.length-2]);
+		populationName = f.getName();
+		if(populationName.toLowerCase().endsWith(".txt")) {
+			populationName = populationName.substring(0, populationName.length()-4);
+		}
+
+		try {
+			File file = new File(args[args.length - 1]);
+			FileWriter writer = new FileWriter(args[args.length - 1]);
+
+			System.out.println("Ficheiro criado: " + file.getName());
+			writer.write("Gerações: \n" + generations + "\n");
+			writer.write("Formato ficheiro gnuplot: \n" + format_gnuplot_files + "\n");
+
+			//Retirar do ficheiro Matrix de Leslie e População
+			leslie = MatrixWriteFile(args[args.length - 2],dim);
+			Matrix leslie_f = convertToMatrix(leslie);
+			writer.write("\nMatriz de Leslie: \n");
+			writer.write(leslie_f + "\n");
+
+			writer.write("Valores da população Inicial: "+ "\n");
+			population = getPopulationfromFile(args[args.length-2],dim);
+			Matrix populatin_f = convertToMatrix(population);
+			writer.write(populatin_f + "\n");
+
+			switch(format_gnuplot_files) {
+				case 2:
+					outputFileGraphFormat = ".txt";
+					break;
+				case 3:
+					outputFileGraphFormat = ".eps";
+					break;
+				default:
+					outputFileGraphFormat = ".png";
+					break;
+			}
+
+			if (vec[0] == 1) {
+				writer.write("Valor Próprio: \n" + eigen_value(leslie) + "\n");
+				writer.write("Vetor Próprio: \n" + Arrays.toString(eigen_vec(leslie)) + "\n");
+
+			}
+			if (vec[1] == 1) {
+				double value = -1;
+				for(int i = 0; i <= generations; i++) {			
+					Matrix populationResult = dimPopulationinT(leslie, population, i);
+					totalPopulationChange[i] = totaldimPopulation(populationResult);
+					value = totalPopulationChange[i];
+					value = value * 100;
+					value = Math.ceil(value);
+					value = value / 100;
+					writer.write("\nDimensão da população em t = " + i + "\n");
+					writer.write(populationResult.toString()+ "\n");
+					writer.write("Total da população em t = " + i+ "\n");
+					writer.write(value + "\n");
+				}
+
+				graphResults = new double[1][generations+1];
+				for (int i = 0; i < generations+1; i++) {
+					graphResults[0][i] = totalPopulationChange[i];
+				}
+				createGraph(graphResults, format_gnuplot_files, "Número Total De Individuos", "Número Total De Individuos", "Momento", "Dimensão da população", populationName+"NúmeroTotalDeIndividuos"+outputFileGraphFormat);
+			}
+			if (vec[2] == 1) {
+				rateOfChange = rateofchange(leslie, population, generations);
+				double value = -1;
+				writer.write("\nTaxa de variação ao longo dos anos: "+ "\n");
+				for(int i = 0; i < generations; i++) {
+					value = rateOfChange[i];
+					value = value * 100;
+					value = Math.ceil(value);
+					value = value / 100;
+					writer.write(value + "\n");
+				}
+
+				graphResults = new double[1][generations];
+				for(int i = 0; i < generations; i++) {
+					graphResults[0][i] = rateOfChange[i];
+				}
+				createGraph(graphResults, format_gnuplot_files, "Crescimento da população", "Crescimento da população", "Momento", "Variação", populationName+"CrescimentoDaPopulação"+outputFileGraphFormat);
+			}
+			writer.close();
+		} catch (IOException e) {
+			System.out.println("Ocorreu um erro ao escrever/criar o ficheiro.");
+			e.printStackTrace();
+		}
+		
+		for(int i = 0; i <= generations; i++) {
+			Matrix populationResult = dimPopulationinT(leslie, population, i);
+			totalPopulationChange[i] = totaldimPopulation(populationResult);
+		}
+		for(int i = 0; i <= generations; i++) {
+			numberOfClasses [i] = dimPopulationinT(leslie, population, i).getColumn(0).toDenseVector().toArray();
+		}
+
+		graphResults = new double[generations+1][dim];
+		for(int i = 0; i < generations+1; i++) {
+			for(int j = 0; j < dim; j++) {
+				graphResults[i][j] = numberOfClasses[i][j];
+			}
+		}
+		createGraph(graphResults, format_gnuplot_files, "Número por Classe (não normalizado)", "Número por Classe", "Momento", "Classe", populationName+"NúmeroporClasse(NãoNormalizado)"+outputFileGraphFormat);
+
+		graphResults = new double[generations+1][dim];
+		for(int i = 0; i < generations+1; i++) {
+			double total = totalPopulationChange[i];
+			for(int j = 0; j < dim; j++) {
+				if(total == 0) {
+					graphResults[i][j] = 0;
+				} else {
+					graphResults[i][j] = 100*numberOfClasses[i][j]/total;
+				}
+			}
+		}
+		createGraph(graphResults, format_gnuplot_files, "Número por Classe (normalizado)", "Número por Classe", "Momento", "Classe", populationName+"NúmeroporClasse(Normalizado)"+outputFileGraphFormat);
+
+		double valor = eigen_value(leslie);
+		double [] vetor = eigen_vec(leslie);
+		creatingTxtFileGraph(leslie, generations, totalPopulationChange, 
+				rateOfChange, numberOfClasses, valor, 
+				vetor, vec[0] == 1, vec[1] == 1, vec[2] == 1);
+    }
+    
     public static double [][] convertToDouble(Matrix matrix){
         int dim = matrix.columns();
         double[][] doubles=new double[dim][dim];
@@ -1092,7 +1129,8 @@ public class Project {
     }
     
     public static void creatingTxtFileGraph(double[][] lesliMatrix, int gen, double[] dimPopulation, 
-    		double[] rateOfChange, double[][] classes, double eigenvalue, double[] eigenvector) throws IOException {
+    		double[] rateOfChange, double[][] classes, double eigenvalue, double[] eigenvector, 
+    		boolean useValueAndVector, boolean useDimPopulation, boolean useRateOfChange) throws IOException {
     	FileWriter result = new FileWriter("TextGraphResult.txt");
     	
     	result.write(String.format("K=%d\n", gen));
@@ -1106,15 +1144,19 @@ public class Project {
     		}
     		result.write(String.format("\n"));
     	}
-    	result.write(String.format("\nNumero total de individuos\n"));
-    	result.write(String.format("(t, Nt)\n"));
-    	for(int i = 0; i < gen+1; i++) {
-    		result.write(String.format(Locale.US, "(%d, %.2f)\n", i, dimPopulation[i]));
+    	if(useDimPopulation) {
+	    	result.write(String.format("\nNumero total de individuos\n"));
+	    	result.write(String.format("(t, Nt)\n"));
+	    	for(int i = 0; i < gen+1; i++) {
+	    		result.write(String.format(Locale.US, "(%d, %.2f)\n", i, dimPopulation[i]));
+	    	}
     	}
-    	result.write(String.format("\n\nCrescimento da população\n"));
-    	result.write(String.format("(t, delta_t)\n"));
-    	for(int i = 0; i < gen; i++) {
-    		result.write(String.format(Locale.US, "(%d, %.2f)\n", i, rateOfChange[i]));
+    	if(useRateOfChange) {
+	    	result.write(String.format("\n\nCrescimento da população\n"));
+	    	result.write(String.format("(t, delta_t)\n"));
+	    	for(int i = 0; i < gen; i++) {
+	    		result.write(String.format(Locale.US, "(%d, %.2f)\n", i, rateOfChange[i]));
+	    	}
     	}
     	result.write(String.format("\n\nNumero por classe (não normalizado)\n"));
     	result.write(String.format("%s\n", getHeader(lesliMatrix.length)));
@@ -1134,16 +1176,18 @@ public class Project {
     		}
     		result.write(String.format(")\n"));
     	}
-    	result.write(String.format("\n\nMaior valor próprio e vetor associado\n"));
-    	result.write(String.format(Locale.US, "lambda=%.4f\n", eigenvalue));
-    	result.write(String.format("vetor proprio associado=("));
-    	for(int i = 0; i < eigenvector.length; i++) {
-    		if(i > 0) {
-    			result.write(", ");
-    		}
-    		result.write(String.format(Locale.US, "%.2f", eigenvector[i]));
+    	if(useValueAndVector) {
+	    	result.write(String.format("\n\nMaior valor próprio e vetor associado\n"));
+	    	result.write(String.format(Locale.US, "lambda=%.4f\n", eigenvalue));
+	    	result.write(String.format("vetor proprio associado=("));
+	    	for(int i = 0; i < eigenvector.length; i++) {
+	    		if(i > 0) {
+	    			result.write(", ");
+	    		}
+	    		result.write(String.format(Locale.US, "%.2f", eigenvector[i]));
+	    	}
+	    	result.write(")\n");
     	}
-    	result.write(")\n");
     	result.close();
     }
     
