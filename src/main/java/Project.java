@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.*;
 
 public class Project {
@@ -63,20 +64,30 @@ public class Project {
 				}
 
 				double[] totalPopulationChange = new double[gen + 1];
+				double value = -1;
 				for (int i = 0; i <= gen; i++) {
 					Matrix populationResult = dimPopulationinT(leslie, population, i); //Possivelmente teremos de alterar em dimPopulationinT inicialização de populationinT
 					totalPopulationChange[i] = totaldimPopulation(populationResult);
+					value = totalPopulationChange[i];
+					value = value * 100;
+					value = Math.ceil(value);
+					value = value / 100;
 					System.out.println("Dimensão da população em t = " + i);
 					System.out.println(populationResult);
 					System.out.println("Total da população em t = " + i);
-					System.out.println(totalPopulationChange[i]);
+					System.out.println(value);
 				}
 
 				double[] rateOfChange = new double[gen];
+				value = -1;
 				rateOfChange = rateofchange(leslie, population, gen);
 				System.out.println("Taxa de variação ao longo dos anos: ");
 				for (int i = 0; i < gen; i++) {
-					System.out.println(rateOfChange[i]);
+					value = rateOfChange[i];
+					value = value * 100;
+					value = Math.ceil(value);
+					value = value / 100;
+					System.out.println(value);
 				}
 
 				System.out.println("Valor de classes: ");
@@ -259,20 +270,30 @@ public class Project {
 				}
 
 				double[] totalPopulationChange = new double[gen + 1];
+				double value = -1;
 				for (int i = 0; i <= gen; i++) {
 					Matrix populationResult = dimPopulationinT(leslie, population, i);
 					totalPopulationChange[i] = totaldimPopulation(populationResult);
+					value = totalPopulationChange[i];
+					value = value * 100;
+					value = Math.ceil(value);
+					value = value / 100;
 					System.out.println("\nDimensão da população em t = " + i);
 					System.out.println(populationResult);
 					System.out.println("Total da população em t = " + i);
-					System.out.println(totalPopulationChange[i]);
+					System.out.println(value);
 				}
 
 				double[] rateOfChange = new double[gen];
+				value = -1;
 				rateOfChange = rateofchange(leslie, population, gen);
 				System.out.println("\nTaxa de variação ao longo dos anos: ");
 				for (int i = 0; i < gen; i++) {
-					System.out.println(rateOfChange[i]);
+					value = rateOfChange[i];
+					value = value * 100;
+					value = Math.ceil(value);
+					value = value / 100;
+					System.out.println(value);
 				}
 
 				System.out.println("\nValor de classes: ");
@@ -500,26 +521,36 @@ public class Project {
 
 					}
 					if (vec[1] == 1) {
+						double value = -1;
 						for(int i = 0; i <= generations; i++) {
 							Matrix populationResult = dimPopulationinT(leslie, population, i);
 							totalPopulationChange[i] = totaldimPopulation(populationResult);
+							value = totalPopulationChange[i];
+							value = value * 100;
+							value = Math.ceil(value);
+							value = value / 100;
 							writer.write("\nDimensão da população em t = " + i + "\n");
 							writer.write(populationResult.toString()+ "\n");
 							writer.write("Total da população em t = " + i+ "\n");
-							writer.write(totalPopulationChange[i] + "\n");
+							writer.write(value + "\n");
 						}
 
 					graphResults = new double[1][generations+1];
-					for(int i = 0; i < generations+1; i++) {
+					for (int i = 0; i < generations+1; i++) {
 						graphResults[0][i] = totalPopulationChange[i];
 					}
 					createGraph(graphResults, format_gnuplot_files, "Número Total De Individuos", "Número Total De Individuos", "Momento", "Dimensão da população", populationName+"NúmeroTotalDeIndividuos"+outputFileGraphFormat);
 					}
 					if (vec[2] == 1) {
 						rateOfChange = rateofchange(leslie, population, generations);
+						double value = -1;
 						writer.write("\nTaxa de variação ao longo dos anos: "+ "\n");
 						for(int i = 0; i < generations; i++) {
-							writer.write(rateOfChange[i] + "\n");
+							value = rateOfChange[i];
+							value = value * 100;
+							value = Math.ceil(value);
+							value = value / 100;
+							writer.write(value + "\n");
 						}
 
 					graphResults = new double[1][generations];
@@ -830,6 +861,10 @@ public class Project {
             }
         }
 
+        max_eigen_value = max_eigen_value * 10000;
+        max_eigen_value = Math.ceil(max_eigen_value);
+        max_eigen_value = max_eigen_value / 10000;
+
         return max_eigen_value;
     }
 
@@ -858,12 +893,18 @@ public class Project {
                 }
             }
         }
+
         //Matriz A:
         double[] eigen_vec = new double[matA.length];
+		double value = -1;
 
         if (count > 0) {
             for (int i = 0; i < matA.length; i++) {
-                eigen_vec[i] = matA[i][count - 1];
+            	value = matA[i][count - 1];
+				value = value * 100;
+				value = Math.ceil(value);
+				value = value / 100;
+                eigen_vec[i] = value;
             }
         } else {
             System.out.println("Line for eigen vector not found.");

@@ -1,5 +1,5 @@
 set terminal qt
-set title "Número por Classe (normalizado)"
+set title "Número por Classe (não normalizado)"
 set xlabel "Momento"
 set ylabel "Classe"
 set style data linespoints
