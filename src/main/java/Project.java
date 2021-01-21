@@ -901,7 +901,7 @@ public class Project {
      * Calculo da distribuição da população
      *
      */
-    public List<String> distriPopulation(double[][] leslie, double[][] population, int t){
+    public static List<String> distriPopulation(double[][] leslie, double[][] population, int t){
 
         //Criação da Matrix em T
         double [][] populationinT = new double[1][population.length];

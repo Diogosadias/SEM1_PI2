@@ -1,6 +1,7 @@
 import org.la4j.Matrix;
 
 import java.io.FileNotFoundException;
+import java.util.List;
 
 class ProjectTest {
 
@@ -23,6 +24,26 @@ class ProjectTest {
 
     public int dim = 4;
 
+    public List<String> distribution ; //Qual é o resultado espectável?
+
+    public double [] rateofchange; //Qual é o resultado espectável?
+
+    static Matrix leslie_matrix = Project.convertToMatrix(matrix_leslie); //Alterar esta inicialização
+
+    /*
+    Alterar valores e verificar se é necessario e qual a melhor maneira de fazer testes unitários para funções void
+    public int outputType;
+    public String graphTitle;
+    public String resultType;
+    public String xLine;
+    public String yLine;
+    public String outputFileName;
+    */
+
+    public int length ; //Qual o resultado espectável?
+
+    public boolean check=true;
+
     boolean leslieMatrix() {
         double[][] matrix_leslie;
 
@@ -30,9 +51,12 @@ class ProjectTest {
     }
 
 
-    public static boolean test_convertToDouble(Matrix matrix,double[][]matrix_leslie){ //fazer
+    public static boolean test_convertToDouble(Matrix leslie_matrix,double[][]matrix_leslie){
+        double [][] test_matrix = Project.convertToDouble(leslie_matrix);
 
-        return true;
+        if(test_matrix==matrix_leslie)
+            return true;
+        else    return false;
     }
 
     public static boolean test_LeslieMatrix(int dim, double[][] matrix_leslie){
@@ -44,8 +68,12 @@ class ProjectTest {
 
     }
 
-    public static boolean test_convertToMatrix() {
-        return true;
+    public static boolean test_convertToMatrix(double[][] matrix_leslie, Matrix leslie_matrix) {
+        Matrix test_matrix = Project.convertToMatrix(matrix_leslie);
+
+        if(test_matrix==leslie_matrix)
+            return true;
+        else    return false;
 
     }
 
@@ -60,13 +88,21 @@ class ProjectTest {
     }
 
 
-    public static boolean test_matrixWriteFile() {
-        return true;
+    public static boolean test_matrixWriteFile(String filename,int dim, double[][] matrix_leslie) throws FileNotFoundException {
+        double[][] test_matrix=Project.MatrixWriteFile(filename,dim);
+
+        if (test_matrix==matrix_leslie)
+            return true;
+        else    return false;
     }
 
 
-    public static boolean test_leslieMatrixFile() {
-        return true;
+    public static boolean test_leslieMatrixFile(String filename,int dim, Matrix leslie_matrix) throws FileNotFoundException {
+        Matrix test_matrix=Project.LeslieMatrixFile(filename,dim);
+
+        if(test_matrix==leslie_matrix)
+            return true;
+        else    return false;
     }
 
 
@@ -81,27 +117,44 @@ class ProjectTest {
     }
 
 
-    public static boolean test_dimPopulationinT() {
-        return true;
+    public static boolean test_dimPopulationinT(double[][] matrix_leslie,double[][] population,int t, Matrix leslie_matrix) {
+        Matrix test_matrix = Project.dimPopulationinT(matrix_leslie,population,t);
+
+        if(test_matrix==leslie_matrix)
+            return true;
+        else    return false;
     }
 
 
-    public static boolean test_totaldimPopulation() {
-        return true;
+    public static boolean test_totaldimPopulation(Matrix leslie_matrix,double sum) {
+        double test_sum=Project.totaldimPopulation(leslie_matrix);
+
+        if(test_sum==sum)
+            return true;
+        else    return false;
     }
 
 
-    public static boolean test_distriPopulation() {
-        return true;
+    public static boolean test_distriPopulation(double[][] matrix_leslie, double[][] population, int t, List<String> distribution) {
+        List<String> test_distribution = Project.distriPopulation(matrix_leslie,population,t);
+
+        if(test_distribution==distribution)
+            return true;
+        else    return false;
     }
 
 
-    public static boolean test_rateofchange() {
-        return true;
+    public static boolean test_rateofchange(double[][] matrix_leslie,double[][] population, int t , double [] rateofchange) {
+        double[] test_rate = Project.rateofchange(matrix_leslie,population,t);
+
+        if(test_rate==rateofchange)
+            return true;
+        else    return false;
     }
 
 
-    public static boolean test_createGraph() {
+    public static boolean test_createGraph(double[][] matrix_leslie, int outputType, String graphTitle,
+                                           String resultType, String xLine, String yLine, String outputFileName) {
         return true;
     }
 
@@ -123,5 +176,21 @@ class ProjectTest {
 
     public static boolean test_creatingTxtFileGraph() {
         return true;
+    }
+
+    public static boolean test_getHeader(int length,String header){
+        String test_header = Project.getHeader(length);
+
+        if(header==test_header)
+            return true;
+        else    return false;
+    }
+
+    public static boolean test_order_class(String filename,boolean check) throws FileNotFoundException {
+        boolean test_check = Project.order_class(filename);
+
+        if(test_check==check)
+            return true;
+        else    return false;
     }
 }
