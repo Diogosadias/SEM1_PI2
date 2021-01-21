@@ -419,9 +419,29 @@ public class Project {
         	if (order_class(args[args.length - 2])) {
 				String outputFileGraphFormat = "";
 
-				String generations_aux = args[1];
+				int[] vec = new int[3];
+				int pos_t = -1, pos_g = -1;
+				for (int i = 0; i < args.length; i++) {
+					if (args[i].equals("-t")) {
+						pos_t = i;
+					}
+					if (args[i].equals("-g")) {
+						pos_g = i;
+					}
+					if (args[i].equals("-e")) {
+						vec[0] = 1;
+					}
+					if (args[i].equals("-v")) {
+						vec[1] = 1;
+					}
+					if (args[i].equals("-r")) {
+						vec[2] = 1;
+					}
+				}
+
+				String generations_aux = args[pos_t + 1];
 				int generations = Integer.parseInt(generations_aux); //gerações a calcular
-				String format_gnuplot_files_aux = args[3];
+				String format_gnuplot_files_aux = args[pos_g + 1];
 				int format_gnuplot_files = Integer.parseInt(format_gnuplot_files_aux); //formato do ficheiro a executar
 
 				do {
@@ -436,20 +456,6 @@ public class Project {
 				double [][] numberOfClasses = new double[generations+1][dim];
 				double[][] leslie = new double[dim][dim];
 				double[][] population = new double[dim][1];
-
-				// Verificar quais os calculos a serem pedidos entre( -e,-v e -r)
-				int[] vec = new int[3];
-				for (int i = 0; i < args.length; i++) {
-					if (args[i].equals("-e")) {
-						vec[0] = 1;
-					}
-					if (args[i].equals("-v")) {
-						vec[1] = 1;
-					}
-					if (args[i].equals("-r")) {
-						vec[2] = 1;
-					}
-				}
 
 				File f = new File(args[args.length-2]);
 				populationName = f.getName();
@@ -760,11 +766,7 @@ public class Project {
     }
 
     public static int getdimfromLeslieMatrixFile(String filename) throws FileNotFoundException {
-
         String[] vec = initial_vec(filename);
-
-        String[] survival = new String[0];
-        String[] fecundity = new String[0];
         String[] quantity_population = new String[0];
 
         Scanner scanner = new Scanner(new File(filename));
