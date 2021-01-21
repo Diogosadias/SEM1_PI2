@@ -220,6 +220,9 @@ public class Project {
 
 		//Modo interativo com ficheiro: java -jar nome_programa.jar -n nome_ficheiro_entrada.txt
 		if (args.length == 2) {
+			if (order_class(args[args.length - 1])) {
+				System.out.println("Ficheiro corretamente formatado.");
+			}
 			while(force == 1) {
 				do {
 					System.out.println("Número de grupos etários: "); //grupos etários - dimensão
