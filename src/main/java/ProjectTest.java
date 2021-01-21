@@ -16,7 +16,7 @@ class ProjectTest {
 
     public int t = 0;
 
-    static String[] vec={"f","s","x"};
+    static String[] vec={"x","s","f"};
 
     public double sum=100;
 
