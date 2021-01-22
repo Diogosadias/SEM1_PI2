@@ -688,8 +688,7 @@ public class Project {
      * @param dim
      * @return Matrix com a população inicial
      */
-
-    public static double[][] getPopulationfromFile(String filename,int dim) throws FileNotFoundException {
+    public static double[][] getPopulationfromFile(String filename, int dim) throws FileNotFoundException {
         String[] vec = initial_vec(filename);
 
         String[] quantity_population = new String[dim];
@@ -709,7 +708,7 @@ public class Project {
             }
         }
 
-        double [][] matrixpop = new double[quantity_population.length][1];
+        double[][] matrixpop = new double[quantity_population.length][1];
 
         for(int i =0; i<quantity_population.length; i++){
         	matrixpop[i][0] = Double.parseDouble(quantity_population[i]);
@@ -957,7 +956,7 @@ public class Project {
      *
      * Output: Valor da dimensão da população em t
      */
-    public static Matrix dimPopulationinT(double[][] leslie, double[][] population, int t ){
+    public static Matrix dimPopulationinT(double[][] leslie, double[][] population, int t ) {
 
         //Criação da Matrix em T
         double [][] populationinT = new double[1][population.length];
@@ -1018,7 +1017,6 @@ public class Project {
      *
      * Output : taxa de variação ao longo dos anos - Lista de valores entre anos
      */
-    
     public static double [] rateofchange(double[][] leslie,double[][] population, int t ){
     	double result [] = new double [t];
     	
