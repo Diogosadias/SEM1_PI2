@@ -8,6 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class Project {
@@ -264,7 +265,8 @@ public class Project {
 			if (!fileName.toLowerCase().endsWith(defaultExtension)) {
 				fileName = fileName + defaultExtension;
 			}
-			createGraph(graphResults, save, graphTitle, resulType, xLine, yLine, populationName + fileName);
+			String data = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+			createGraph(graphResults, save, graphTitle, resulType, xLine, yLine, populationName + data + fileName);
 		}
 		creatingTxtFileGraph(leslie, gen, totalPopulationChange, 
 				rateOfChange, numberOfClasses, eigenvalue, eigenvector, true,
@@ -460,7 +462,8 @@ public class Project {
 			if (!fileName.toLowerCase().endsWith(defaultExtension)) {
 				fileName = fileName + defaultExtension;
 			}
-			createGraph(graphResults, save, graphTitle, resulType, xLine, yLine, populationName + fileName);
+			String data = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+			createGraph(graphResults, save, graphTitle, resulType, xLine, yLine, populationName + data + fileName);
 		}
 		creatingTxtFileGraph(leslie, gen, totalPopulationChange, 
 				rateOfChange, numberOfClasses, eigenvalue, eigenvector, true,
@@ -575,7 +578,8 @@ public class Project {
 				for (int i = 0; i < generations+1; i++) {
 					graphResults[0][i] = totalPopulationChange[i];
 				}
-				createGraph(graphResults, format_gnuplot_files, "Número Total De Individuos", "Número Total De Individuos", "Momento", "Dimensão da população", populationName+"NúmeroTotalDeIndividuos"+outputFileGraphFormat);
+				String data1 = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+				createGraph(graphResults, format_gnuplot_files, "Número Total De Individuos", "Número Total De Individuos", "Momento", "Dimensão da população", populationName+data1+"NúmeroTotalDeIndividuos"+outputFileGraphFormat);
 			}
 			if (vec[2] == 1) {
 				rateOfChange = rateofchange(leslie, population, generations);
@@ -593,7 +597,8 @@ public class Project {
 				for(int i = 0; i < generations; i++) {
 					graphResults[0][i] = rateOfChange[i];
 				}
-				createGraph(graphResults, format_gnuplot_files, "Crescimento da população", "Crescimento da população", "Momento", "Variação", populationName+"CrescimentoDaPopulação"+outputFileGraphFormat);
+				String data2 = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+				createGraph(graphResults, format_gnuplot_files, "Crescimento da população", "Crescimento da população", "Momento", "Variação", populationName+data2+"CrescimentoDaPopulação"+outputFileGraphFormat);
 			}
 			writer.close();
 		} catch (IOException e) {
@@ -608,6 +613,7 @@ public class Project {
 		for(int i = 0; i <= generations; i++) {
 			numberOfClasses [i] = dimPopulationinT(leslie, population, i).getColumn(0).toDenseVector().toArray();
 		}
+		String data3 = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
 
 		graphResults = new double[generations+1][dim];
 		for(int i = 0; i < generations+1; i++) {
@@ -615,7 +621,7 @@ public class Project {
 				graphResults[i][j] = numberOfClasses[i][j];
 			}
 		}
-		createGraph(graphResults, format_gnuplot_files, "Número por Classe (não normalizado)", "Número por Classe", "Momento", "Classe", populationName+"NúmeroporClasse(NãoNormalizado)"+outputFileGraphFormat);
+		createGraph(graphResults, format_gnuplot_files, "Número por Classe (não normalizado)", "Número por Classe", "Momento", "Classe", populationName+data3+"NúmeroporClasse(NãoNormalizado)"+outputFileGraphFormat);
 
 		graphResults = new double[generations+1][dim];
 		for(int i = 0; i < generations+1; i++) {
@@ -628,7 +634,7 @@ public class Project {
 				}
 			}
 		}
-		createGraph(graphResults, format_gnuplot_files, "Número por Classe (normalizado)", "Número por Classe", "Momento", "Classe", populationName+"NúmeroporClasse(Normalizado)"+outputFileGraphFormat);
+		createGraph(graphResults, format_gnuplot_files, "Número por Classe (normalizado)", "Número por Classe", "Momento", "Classe", populationName+data3+"NúmeroporClasse(Normalizado)"+outputFileGraphFormat);
 
 		double valor = eigen_value(leslie);
 		double [] vetor = eigen_vec(leslie);
