@@ -92,7 +92,7 @@ public class Project {
 			gen = in.nextInt();
 		} while (dim < 0 && gen < 0);
 
-		//Criar Matriz Leslie
+		// Criar Matriz Leslie
 		double[][] leslie = LeslieMatrix(dim);
 		System.out.println("Matriz de Leslie: ");
 		Matrix matrix_leslie = convertToMatrix(leslie);
