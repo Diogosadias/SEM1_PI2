@@ -1294,7 +1294,6 @@ public class Project {
 				}
 			}
 		}
-
 		if (flag) {
 			System.out.println("A ordem dos valores está incorreta no ficheiro de entrada.");
 			return false;
