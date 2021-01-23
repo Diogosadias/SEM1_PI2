@@ -1,3 +1,5 @@
+package lapr.project;
+
 import org.la4j.Matrix;
 import org.la4j.decomposition.EigenDecompositor;
 import org.la4j.matrix.dense.Basic1DMatrix;

@@ -1,3 +1,5 @@
+package lapr.project;
+
 import org.la4j.Matrix;
 
 import java.io.FileNotFoundException;
@@ -37,29 +39,28 @@ static double [] rateofchange={1.12};
 static String header = "(t, x1, x2)";
 
 public static void main(String[] args) throws FileNotFoundException {
-//        System.out.println("Test_LeslieMatrix: ");
-//        System.out.println(test_LeslieMatrix(4, matrix_leslie));
-//        System.out.println("Test_GetPopulationFromFile: ");
-//        System.out.println(test_getPopulationfromFile("src/main/resources/test.txt", 4, population));
-//        System.out.println("Test_MatrixWriteFile: ");
-//        System.out.println(test_matrixWriteFile("src/main/resources/test.txt", 4, matrix_leslie_file));
-//        System.out.println("Test_EigenValue: ");
-//        System.out.println(test_eigen_value(matrix_leslie_file, 1.4876));
-//        System.out.println("Test_LeslieMatrixFile: ");
-//        System.out.println(test_leslieMatrixFile("src/main/resources/test.txt", 4, leslie_matrix));
-//        System.out.println("Test_DimPopulationinT: ");
-//        System.out.println(test_dimPopulationinT(matrix_leslie_file,population,0,population_matrix));
-//       System.out.println("test_totaldimPopulation :");
-//       System.out.println(test_totaldimPopulation(population_matrix,100));
-//       System.out.println("test_distriPopulation :");
-//       System.out.println(test_distriPopulation(matrix_leslie_file,population,2,distribution));
-//    System.out.println("test_rateofchange : ");
-//    System.out.println(test_rateofchange(matrix_leslie_file,population,1,rateofchange));
-//    System.out.println("test_getHeader :");
-//    System.out.println(test_getHeader(2,header));
-//    System.out.println("test_order_class :");
-//    System.out.println(test_order_class("src/main/resources/test.txt",true));
-
+    System.out.println("Test_LeslieMatrix: ");
+    System.out.println(test_LeslieMatrix(4, matrix_leslie));
+    System.out.println("Test_GetPopulationFromFile: ");
+    System.out.println(test_getPopulationfromFile("src/main/resources/test.txt", 4, population));
+    System.out.println("Test_MatrixWriteFile: ");
+    System.out.println(test_matrixWriteFile("src/main/resources/test.txt", 4, matrix_leslie_file));
+    System.out.println("Test_EigenValue: ");
+    System.out.println(test_eigen_value(matrix_leslie_file, 1.4876));
+    System.out.println("Test_LeslieMatrixFile: ");
+    System.out.println(test_leslieMatrixFile("src/main/resources/test.txt", 4, leslie_matrix));
+    System.out.println("Test_DimPopulationinT: ");
+    System.out.println(test_dimPopulationinT(matrix_leslie_file,population,0,population_matrix));
+    System.out.println("test_totaldimPopulation:");
+    System.out.println(test_totaldimPopulation(population_matrix,100));
+    System.out.println("test_distriPopulation:");
+    System.out.println(test_distriPopulation(matrix_leslie_file,population,2,distribution));
+    System.out.println("test_rateofchange: ");
+    System.out.println(test_rateofchange(matrix_leslie_file,population,1,rateofchange));
+    System.out.println("test_getHeader: ");
+    System.out.println(test_getHeader(2,header));
+    System.out.println("test_order_class: ");
+    System.out.println(test_order_class("src/main/resources/test.txt",true));
 }
 /*
 Alterar valores e verificar se é necessario e qual a melhor maneira de fazer testes unitários para funções void
@@ -72,11 +73,11 @@ public String outputFileName;
 */
 
 /*public static boolean test_convertToDouble(Matrix leslie_matrix, double[][] matrix_leslie) {
-    double [][] test_matrix = Project.convertToDouble(leslie_matrix);
+    double [][] test_matrix = lapr.project.Project.convertToDouble(leslie_matrix);
 }*/
 
 /*public static boolean test_convertToMatrix(double[][] matrix_leslie, Matrix leslie_matrix) {
-    Matrix test_matrix = Project.convertToMatrix(matrix_leslie);
+    Matrix test_matrix = lapr.project.Project.convertToMatrix(matrix_leslie);
 
     if(test_matrix==leslie_matrix)
         return true;
@@ -164,7 +165,7 @@ public static boolean test_dimPopulationinT(double[][] matrix_leslie,double[][] 
 
 
 public static boolean test_totaldimPopulation(Matrix leslie_matrix,double sum) {
-    double test_sum=Project.totaldimPopulation(leslie_matrix);
+    double test_sum= Project.totaldimPopulation(leslie_matrix);
 
     if(test_sum==sum)
         return true;
