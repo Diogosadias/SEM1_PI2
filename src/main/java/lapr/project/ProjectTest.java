@@ -73,11 +73,11 @@ public String outputFileName;
 */
 
 /*public static boolean test_convertToDouble(Matrix leslie_matrix, double[][] matrix_leslie) {
-    double [][] test_matrix = lapr.project.Project.convertToDouble(leslie_matrix);
+    double [][] test_matrix = lapr.project.lapr.project.Project.convertToDouble(leslie_matrix);
 }*/
 
 /*public static boolean test_convertToMatrix(double[][] matrix_leslie, Matrix leslie_matrix) {
-    Matrix test_matrix = lapr.project.Project.convertToMatrix(matrix_leslie);
+    Matrix test_matrix = lapr.project.lapr.project.Project.convertToMatrix(matrix_leslie);
 
     if(test_matrix==leslie_matrix)
         return true;

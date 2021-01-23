@@ -123,16 +123,19 @@ public class Project {
 		double[] totalPopulationChange = new double[gen + 1];
 		double value = -1;
 		for (int i = 0; i <= gen; i++) {
-			Matrix populationResult = dimPopulationinT(leslie, population, i); //Possivelmente teremos de alterar em dimPopulationinT inicialização de populationinT
+			Matrix populationResult = dimPopulationinT(leslie, population, i);
 			totalPopulationChange[i] = totaldimPopulation(populationResult);
+			double[][]populationResult2 = convertToDouble(populationResult);
 			value = totalPopulationChange[i];
 			value = value * 100;
 			value = Math.ceil(value);
 			value = value / 100;
 			System.out.println("Dimensão da população em t = " + i);
-			System.out.println(populationResult);
+			for(int j = 0; j < dim; j++) {
+				System.out.println(String.format("%.2f", populationResult2[j][0]));
+			}
 			System.out.println("Total da população em t = " + i);
-			System.out.println(value);
+			System.out.println(String.format("%.2f", value));
 		}
 
 		double[] rateOfChange = new double[gen];
@@ -144,14 +147,23 @@ public class Project {
 			value = value * 100;
 			value = Math.ceil(value);
 			value = value / 100;
-			System.out.println(value);
+			System.out.println(String.format("%.2f", value));
 		}
 
+		String txt = "";
 		System.out.println("Valor de classes: ");
 		double[][] numberOfClasses = new double[gen + 1][dim];
 		for (int i = 0; i <= gen; i++) {
 			numberOfClasses[i] = dimPopulationinT(leslie, population, i).getColumn(0).toDenseVector().toArray();
-			System.out.println(Arrays.toString(numberOfClasses[i]));
+			txt = "[";
+			for(int j = 0; j < numberOfClasses[i].length; j++) {
+				if(j!=0) {
+					txt += ", ";
+				}
+				txt += String.format("%.2f", numberOfClasses[i][j]);
+			}
+			txt += "]";
+			System.out.println(txt);
 		}
 
 		double[][] graphResults = new double[1][1];
@@ -320,35 +332,47 @@ public class Project {
 		double[] totalPopulationChange = new double[gen + 1];
 		double value = -1;
 		for (int i = 0; i <= gen; i++) {
-			Matrix populationResult = dimPopulationinT(leslie, population, i);
+			Matrix populationResult = dimPopulationinT(leslie, population, i); //Possivelmente teremos de alterar em dimPopulationinT inicialização de populationinT
 			totalPopulationChange[i] = totaldimPopulation(populationResult);
+			double[][]populationResult2 = convertToDouble(populationResult);
 			value = totalPopulationChange[i];
 			value = value * 100;
 			value = Math.ceil(value);
 			value = value / 100;
-			System.out.println("\nDimensão da população em t = " + i);
-			System.out.println(populationResult);
+			System.out.println("Dimensão da população em t = " + i);
+			for(int j = 0; j < dim; j++) {
+				System.out.println(String.format("%.2f", populationResult2[j][0]));
+			}
 			System.out.println("Total da população em t = " + i);
-			System.out.println(value);
+			System.out.println(String.format("%.2f", value));
 		}
 
 		double[] rateOfChange = new double[gen];
 		value = -1;
 		rateOfChange = rateofchange(leslie, population, gen);
-		System.out.println("\nTaxa de variação ao longo dos anos: ");
+		System.out.println("Taxa de variação ao longo dos anos: ");
 		for (int i = 0; i < gen; i++) {
 			value = rateOfChange[i];
 			value = value * 100;
 			value = Math.ceil(value);
 			value = value / 100;
-			System.out.println(value);
+			System.out.println(String.format("%.2f", value));
 		}
 
-		System.out.println("\nValor de classes: ");
+		String txt = "";
+		System.out.println("Valor de classes: ");
 		double[][] numberOfClasses = new double[gen + 1][dim];
 		for (int i = 0; i <= gen; i++) {
 			numberOfClasses[i] = dimPopulationinT(leslie, population, i).getColumn(0).toDenseVector().toArray();
-			System.out.println(Arrays.toString(numberOfClasses[i]));
+			txt = "[";
+			for(int j = 0; j < numberOfClasses[i].length; j++) {
+				if(j!=0) {
+					txt += ", ";
+				}
+				txt += String.format("%.2f", numberOfClasses[i][j]);
+			}
+			txt += "]";
+			System.out.println(txt);
 		}
 
 		double[][] graphResults = new double[1][1];
@@ -647,9 +671,10 @@ public class Project {
     
     public static double [][] convertToDouble(Matrix matrix){
         int dim = matrix.columns();
-        double[][] doubles=new double[dim][dim];
+        int gen = matrix.rows();
+        double[][] doubles=new double[gen][dim];
 
-        for(int i =0; i<dim;i++){
+        for(int i =0; i<gen;i++){
             for(int j=0;j<dim;j++){
                 doubles[i][j] = matrix.get(i,j);
             }
@@ -1271,7 +1296,6 @@ public class Project {
 				}
 			}
 		}
-
 		if (flag) {
 			System.out.println("A ordem dos valores está incorreta no ficheiro de entrada.");
 			return false;
